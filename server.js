@@ -37,7 +37,8 @@ app.engine(".hbs", exphbs({ extname: ".hbs",
 app.set("view engine", ".hbs"); 
 
 // Setup the static folder
-app.use(express.static("public"));
+// app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set the middleware for urlencoded form data
 app.use(bodyParser.urlencoded({ extended: true }));
