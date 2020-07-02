@@ -53,7 +53,7 @@ module.exports.validateSignup = function(inData){
         }
         
         // if password doesn't get the error message yet, validate using other criterias
-        if (data.errorMessages['password'] === "") {
+        if (data.signupError['password'] === "") {
             var re = new RegExp("^[A-Za-z0-9]+$");
             if (inData.password.trim().length >= 6 && inData.password.trim().length <= 12) {
                 if (!re.test(inData.password)) {
