@@ -1,0 +1,32 @@
+<div class="form-wrapper">
+    <div class="form-container">
+        <h1 class="form-heading">{{#ifSame page "register"}}Registration{{/ifSame}}{{#ifSame page "login"}}Log In{{/ifSame}}</h1>
+        <form class="register-form" {{#ifSame page "register"}}action="/register"{{/ifSame}}{{#ifSame page "login"}}action="/login"{{/ifSame}} method="POST">
+            {{#ifSame page "register"}}
+            <div class="signup-input-container">
+                <label for="fName">First Name</label>
+                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="fName" id="fName" placeholder="First Name" value="{{#if errorMessage}}{{formData.fName}}{{/if}}">
+                {{#if errorMessage}}<span class="inputErrorMessage">{{data.errorMessages.fName}}</span>{{/if}}        
+            </div>
+            <div class="signup-input-container">
+                <label for="lName">Last Name</label>
+                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="lName" id="lName" placeholder="Last Name" value="{{#if errorMessage}}{{formData.lName}}{{/if}}">
+                {{#if errorMessage}}<span class="inputErrorMessage">{{data.errorMessages.lName}}</span>{{/if}}
+            </div>
+            {{/ifSame}}
+            <div class="signup-input-container">
+                <label for="email">Email</label>
+                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="email" name="email" id="email" placeholder="Email" value="{{#if errorMessage}}{{formData.email}}{{/if}}">
+                {{#if errorMessage}}<span class="inputErrorMessage">{{data.errorMessages.email}}</span>{{/if}}
+            </div>
+            <div class="signup-input-container">
+                <label {{#ifSame page "login"}}class="login-password-label"{{/ifSame}} for="password">Password{{#ifSame page "login"}}<span class="password-reset"><a class="password-reset-link"href="#">Forgot password?</a></span>{{/ifSame}}</label>
+                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="password" name="password" id="password" placeholder="Password" value="{{#if errorMessage}}{{formData.password}}{{/if}}">
+                {{#if errorMessage}}<span class="inputErrorMessage">{{data.errorMessages.password}}</span>{{/if}}
+            </div>
+            <div class="signup-input-container">
+                <input class="signup-submit" type="submit" name="submit" id="submit" value="{{#ifSame page "register"}}SIGN UP{{/ifSame}}{{#ifSame page "login"}}SIGN IN{{/ifSame}}">
+            </div>
+        </form>
+    </div>
+</div>

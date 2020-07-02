@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oneperfectmeal</title>
+    <link rel="icon" href="./img/logo-3.png">
+    {{!-- Google Fonts --}}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800;900&family=Ubuntu&family=Noto+Sans:ital@1&family=Lato:wght@900&family=Rubik:wght@500&family=Noto+Sans+JP:wght@400;500;600;700;900&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    {{!-- Font Awesome --}}
+    <script src="https://kit.fontawesome.com/629442e482.js" crossorigin="anonymous"></script>
+
+    {{!-- CSS & bootstrap stylesheets --}}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+
+    {{!-- Bootstrap Scripts --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</head>
+<body>
+    <main>
+        {{> header}}
+        {{{body}}}  {{!-- where the body data gets rendered --}}
+        {{>footer}}
+    </main>
+</body>
+</html>

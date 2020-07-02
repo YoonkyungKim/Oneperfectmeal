@@ -1,0 +1,73 @@
+
+{{!-- hero section --}}
+{{> hero data.hero.[0]}}
+
+<section class="banner">
+    <div class="banner-only-text">
+        <p class="banner-only-text-p">Discover the perfect meal prepared for you by a professional chef today.</p>
+        <button type="button" class="btn btn-dark btn-lg banner-btn">Order Now</button>
+    </div>
+</section>
+
+<section id="content">
+    <div class="content-container">
+        <div class="content-heading heading">
+            <h3>Enjoy a quick, easy and simple mealtime.</h3>
+        </div>
+        <div class="content-items row">
+            {{#each data.content}}
+            <div class="col-lg-3 col-md-6 col-sm-6 content-item-column">
+                <div class="content-item-box">
+                    <div class="content-item-img-box">
+                        <img class="content-item-img" src={{img}} alt={{imgAlt}}>
+                    </div>
+                    <div class="content-item-text">
+                        <h4>{{title}}</h4>
+                        <p>{{text}}</p>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+            
+        </div>
+    </div>
+</section>
+
+<section class="banner">
+    <div class="banner-container">
+        <img class="banner-img banner-img-home" src="./img/banner-1.jpg" alt="banner-home">
+        <div class="banner-text-container">
+            <h2 class="banner-text h2-white">Rich flavor can't be easily met</h2>
+        </div>
+    </div>
+</section>
+
+<div class="top-meal-heading heading">
+    <h3 class="top-meal-h3">Meet the dishes prepared by professional chefs now!</h3>
+    <p class="top-meal-p">You can experience a chef's touch at home without having to go to a restaurant with just one order!</p>
+    <p class="top-meal-p">There would be no regrets, only addiction.</p>                 
+</div>
+
+<section id="top-meal-package">
+    <div class="items-container">        
+        <div class="items row">
+            {{!-- {{#each data.mealPackage}}
+                {{#if topPackage}}
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="item-box">
+                            <div class="item-img-box">
+                                <img class="item-img" src={{img}} alt={{name}}>
+                            </div>
+                            <div class="item-text-box">
+                                <p class="item-name">{{name}}</p>
+                                <p class="item-price">{{price}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{/if}}
+            {{/each}} --}}
+            {{> item-list }}
+        </div>
+    </div>
+</section>
+
