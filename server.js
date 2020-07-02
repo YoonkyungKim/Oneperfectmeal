@@ -11,6 +11,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const nodemailer = require('nodemailer');
 const ds = require("./data");
+const path = require("path");
 
 // Handlebars setup
 // register handlebars as the rendering engine for views
