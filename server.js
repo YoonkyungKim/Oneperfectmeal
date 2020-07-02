@@ -93,26 +93,36 @@ app.get("/login", (req, res) => {
 //     })
 // });
 
-var emailValidation = function(input){
-    return new Promise(function(resolve, reject){
-        if (input !== null && input !== undefined && input.length !== 0){
-            resolve(input);
-        } else {
-            reject("This field is required");
-        }
-    });       
-}
+// var emailValidation = function(input){
+//     return new Promise(function(resolve, reject){
+//         if (input !== null && input !== undefined && input.length !== 0){
+//             resolve(input);
+//         } else {
+//             reject("This field is required");
+//         }
+//     });       
+// }
 
 app.post("/login", (req, res) => {
+
+    // to not clear the form if the data is invalid. Spaces must be erased
+      var inputData = {
+        email: req.body.email.trim(),
+        password: req.body.password.trim()
+    }
+
     // console.log(req.body);
-    
-    ds.validateLogin(req.body).then(() =>{
-        res.redirect("/");
-    }).catch((message)=> {
-        res.render("login", {
-            errorMessage: true,
-            page: "login"
-        });
+    ds.getData().then((inData)=>{
+        ds.validateLogin(req.body).then(() =>{
+            res.redirect("/");
+        }).catch(()=> {
+            res.render("login", {
+                data: inData,
+                errorMessage: true,
+                formData: inputData,
+                page: "login"
+            });
+        })
     })
 })
 
@@ -158,6 +168,8 @@ app.post("/register", (req, res) => {
                     }
                 })
                 res.render("dashboard", {username: inputData.fName});
+            }).catch(()=>{
+                console.log("data fail to stored");
             })
         }).catch(()=> {
             res.render("registration", {

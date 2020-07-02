@@ -27,7 +27,8 @@ module.exports.validateLogin = function(inData){
                 }
             }
         }
-
+        console.log(data.loginError[key]);
+        
         if (valid){
             resolve();
         } else {
@@ -83,8 +84,11 @@ module.exports.validateSignup = function(inData){
 
 module.exports.storeUserInfo = function(inData){
     return new Promise(function(resolve, reject){
-        data.user.push(inData);
-        resolve();
+        if (data.user.push(inData)){
+            resolve();
+        } else {
+            reject();
+        }
     })
 }
 
