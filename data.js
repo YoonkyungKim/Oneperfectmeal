@@ -75,6 +75,7 @@ module.exports.validateSignup = function(inData){
         console.log(data.signupError['password']);
 
         if (valid){
+            data.hero[4].text = inData.fName;
             resolve();
         } else {
             reject();
@@ -209,6 +210,13 @@ var data = {
             text: "Log in",
             img: "./img/banner-2.jpg",
             imgAlt: "login-hero",
+            button: false
+        },
+        {
+            page: "dashboard",
+            text: "",
+            img: "./img/banner-4.jpg",
+            imgAlt: "dashboard-hero",
             button: false
         }
     ],

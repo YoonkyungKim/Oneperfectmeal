@@ -167,7 +167,7 @@ app.post("/register", (req, res) => {
                         console.log('Email sent: ' + info.response);
                     }
                 })
-                res.render("dashboard", {username: inputData.fName});
+                res.render("dashboard", { data: inData });
             }).catch(()=>{
                 console.log("data fail to stored");
             })

@@ -408,6 +408,28 @@ p {
     color: #E5226D;
 }
 
+/* dashboard */
+
+.hero-dashboard {
+    max-height: 390px;
+}
+
+.hero-text-dashboard {
+    line-height: 1.5;
+    font-size: 3.2rem;
+    margin-top: 3.5%;
+}
+
+.dashboard-text-box {
+    margin: 5% 0;
+}
+
+.dashboard-p {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #E5226D;
+}
+
 /* //1028 */
 @media (max-width: 996px){
 
