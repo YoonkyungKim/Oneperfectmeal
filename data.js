@@ -74,9 +74,9 @@ module.exports.validateSignup = function(inData){
 
         // if first name doesn't get the error message yet, validate using another criteria
         if (data.signupError['fName'] === "") {
-            var re = new RegExp("^[A-Za-z]+$");
+            var re = new RegExp("^[A-Za-z]{2,}$");
             if (!re.test(inData.fName)){
-                data.signupError.fName = "First name must have letters only.";
+                data.signupError.fName = "First name must have letters only and must be longer than one letter.";
                 valid = false;
             } else {
                 data.signupError.fName = "";
@@ -85,12 +85,23 @@ module.exports.validateSignup = function(inData){
 
         // if last name doesn't get the error message yet, validate using another criteria
         if (data.signupError['lName'] === "") {
-            var re = new RegExp("^[A-Za-z]+$");
+            var re = new RegExp("^[A-Za-z]{2,}$");
             if (!re.test(inData.lName)){
-                data.signupError.lName = "Last name must have letters only.";
+                data.signupError.lName = "Last name must have letters only and must be longer than one letter.";
                 valid = false;
             } else {
                 data.signupError.lName = "";
+            }
+        }
+        
+        // if email doesn't get the error message yet, validate using another criteria
+        if (data.signupError['email'] === "") {
+            var re = new RegExp("^[A-Za-z0-9_]+\.*[A-Za-z0-9_]+@[A-Za-z0-9]+\.[A-Za-z]{2,3}$");
+            if (!re.test(inData.email)){
+                data.signupError.email = "Username cannot start/end with a period & top level domain must be 2-3 characters";
+                valid = false;
+            } else {
+                data.signupError.email = "";
             }
         }
         
