@@ -103,16 +103,6 @@ app.get("/dashboard", (req, res) => {
     })
 });
 
-// var emailValidation = function(input){
-//     return new Promise(function(resolve, reject){
-//         if (input !== null && input !== undefined && input.length !== 0){
-//             resolve(input);
-//         } else {
-//             reject("This field is required");
-//         }
-//     });       
-// }
-
 app.post("/login", (req, res) => {
 
     // to not clear the form if the data is invalid. Spaces must be erased
@@ -121,7 +111,6 @@ app.post("/login", (req, res) => {
         password: req.body.password.trim()
     }
 
-    // console.log(req.body);
     ds.getData().then((inData)=>{
         ds.validateLogin(req.body).then(() =>{
             res.redirect("/");
@@ -138,11 +127,7 @@ app.post("/login", (req, res) => {
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
-    // host: 'smtp.mailtrap.io',
-    port: 2525,
     auth: {
-        // user: '6eeef2d984e75a',
-        // pass: '884696155e68cd'
         user: 'lh849678@gmail.com',
         pass: 'dkahsemvlzks11~'
     }
@@ -176,7 +161,6 @@ app.post("/register", (req, res) => {
                         console.log('Email sent: ' + info.response);
                     }
                 })
-                // res.render("dashboard", { data: inData });
                 res.redirect("dashboard");
             }).catch(()=>{
                 console.log("data fail to stored");
@@ -191,38 +175,6 @@ app.post("/register", (req, res) => {
         })
     })
 })
-
-// app.post("/login", (req, res) => {
-//     // emailValidation(req.body.email).then((input)=>{
-//     //     console.log(`We received ${input}`);
-//     // })
-//     // .catch((reason) => {
-//     //     console.log(reason);
-//     // });
-
-//     // should i do JSON.stringify()?
-//     var inputData = {
-//         email: JSON.stringify(req.body.email),
-//         password: JSON.stringify(req.body.password)
-//     }
-
-//     if (inputData.email !== null && inputData.email.length !== 0){  
-//         console.log(req.body.email);
-//         ds.getData().then((inData)=>{
-//             res.render("login", { data: inData });
-//         })
-//     } else {
-//         ds.getData().then((inData)=>{
-//             res.render("login", { 
-//                 data: inData,
-//                 formData: inputData,
-//                 errors: "This field is required"
-//             })
-//         console.log("This field is required");
-//         })
-//     }
-// });
-
 
 // listen the port
 app.listen(HTTP_PORT, onHttpStart);

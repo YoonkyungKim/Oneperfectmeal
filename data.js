@@ -27,7 +27,6 @@ module.exports.validateLogin = function(inData){
                 }
             }
         }
-        //console.log(data.loginError[key]);
         
         if (valid){
             resolve();
@@ -44,7 +43,6 @@ module.exports.validateSignup = function(inData){
             if (inData.hasOwnProperty(key)){
                 if (inData[key] === null || inData[key].trim().length === 0){
                     data.signupError[key] = "This field is required.";
-                    // console.log(data.errorMessages[key]);
                     valid = false;
                 } else {
                     data.signupError[key] = "";
@@ -104,11 +102,9 @@ module.exports.validateSignup = function(inData){
                 data.signupError.email = "";
             }
         }
-        
-        // console.log(data.signupError['password']);
 
         if (valid){
-            // pass the first name to the dashboard page's text
+            // store the user's first name to the dashboard page's text
             data.hero[4].text = inData.fName;
             resolve();
         } else {

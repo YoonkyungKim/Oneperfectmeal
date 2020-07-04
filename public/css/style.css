@@ -233,15 +233,12 @@ p {
 .item-box {
     margin: 0 auto;
     width: 100%;
-    /* width: 280px; */
 }
 
 .item-img-box {
     align-items:center;
     justify-content:center;
     display:flex;
-    /* width: 280px;
-    height: 280px; */
     width: 100%;
     overflow: hidden;
 }
@@ -609,9 +606,6 @@ p {
 
 @media (max-width: 768px){
 
-    /* main {
-        margin-top: 10%;
-    } */
 
     h3 {
         font-size: 2rem;
@@ -822,7 +816,6 @@ p {
     .form-container{
         padding: 5% 5% 3% 5%;
         margin: 10% auto;
-        /* width: 80%; */
         clear: both;
         border: 1px solid #d3d3d3;
     }
