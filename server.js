@@ -29,6 +29,16 @@ app.engine(".hbs", exphbs({ extname: ".hbs",
             } else {
                 return options.inverse(this);
             }
+        }, 
+        getLatestUser: function(arr, options) {
+            var lastUser;
+            if (arr && arr.length > 0){
+                lastUser = arr[arr.length - 1];
+                const regex = /./gi;
+                var replacedPw = lastUser.password.replace(regex, '*')
+                lastUser.password = replacedPw;
+                return options.fn(lastUser);
+            }
         }
     } 
 })
@@ -87,11 +97,11 @@ app.get("/login", (req, res) => {
     })
 });
 
-// app.get("/dashboard", (req, res) => {
-//     ds.getData().then((inData)=>{
-//         res.render("dashboard", { data: inData });
-//     })
-// });
+app.get("/dashboard", (req, res) => {
+    ds.getData().then((inData)=>{
+        res.render("dashboard", { data: inData });
+    })
+});
 
 // var emailValidation = function(input){
 //     return new Promise(function(resolve, reject){
@@ -156,7 +166,6 @@ app.post("/register", (req, res) => {
         text: `Hey ${inputData.fName}, welcome to Oneperfectmeal. Enjoy a delicious and varied meal prepared for you!`
     };
         
-    // console.log(inputData);
     ds.getData().then((inData)=>{
         ds.validateSignup(req.body).then(() =>{
             ds.storeUserInfo(req.body).then(() => {
@@ -167,7 +176,8 @@ app.post("/register", (req, res) => {
                         console.log('Email sent: ' + info.response);
                     }
                 })
-                res.render("dashboard", { data: inData });
+                // res.render("dashboard", { data: inData });
+                res.redirect("dashboard");
             }).catch(()=>{
                 console.log("data fail to stored");
             })

@@ -27,7 +27,7 @@ module.exports.validateLogin = function(inData){
                 }
             }
         }
-        console.log(data.loginError[key]);
+        //console.log(data.loginError[key]);
         
         if (valid){
             resolve();
@@ -71,10 +71,33 @@ module.exports.validateSignup = function(inData){
                 valid = false;
             }
         }
+
+        // if first name doesn't get the error message yet, validate using another criteria
+        if (data.signupError['fName'] === "") {
+            var re = new RegExp("^[A-Za-z]+$");
+            if (!re.test(inData.fName)){
+                data.signupError.fName = "First name must have letters only.";
+                valid = false;
+            } else {
+                data.signupError.fName = "";
+            }
+        }
+
+        // if last name doesn't get the error message yet, validate using another criteria
+        if (data.signupError['lName'] === "") {
+            var re = new RegExp("^[A-Za-z]+$");
+            if (!re.test(inData.lName)){
+                data.signupError.lName = "Last name must have letters only.";
+                valid = false;
+            } else {
+                data.signupError.lName = "";
+            }
+        }
         
-        console.log(data.signupError['password']);
+        // console.log(data.signupError['password']);
 
         if (valid){
+            // pass the first name to the dashboard page's text
             data.hero[4].text = inData.fName;
             resolve();
         } else {
@@ -85,7 +108,8 @@ module.exports.validateSignup = function(inData){
 
 module.exports.storeUserInfo = function(inData){
     return new Promise(function(resolve, reject){
-        if (data.user.push(inData)){
+        if (data.user.push(inData)){    
+        console.log(data.user);
             resolve();
         } else {
             reject();

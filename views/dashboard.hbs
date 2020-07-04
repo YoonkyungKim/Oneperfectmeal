@@ -2,7 +2,56 @@
 {{> hero data.hero.[4]}}
 
 {{!-- <h1 class="hero-text">Welcome to Oneperfectmeal, {{username}}!</h1> --}}
-<div class="dashboard-text-box">
-    <p class="dashboard-p">Your registration is complete.</p>
-    <p class="dashboard-p">Now you are all set to place your first order!</p>
+
+
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-text-box">
+        <p class="dashboard-p">Your registration is complete.</p>
+        <p class="dashboard-p">Now you are all set to place your first order!</p>
+        <button class="dashboard-shop-button">Go to look around the meals!</button>
+    </div>
+
+    <div class="dashboard-sidebar">  
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-utensils"></i>
+            <a class="dashboard-sidebar-a" href="#">Your Order</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-star"></i>
+            <a class="dashboard-sidebar-a" href="#">Premium</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-percentage"></i>
+            <a class="dashboard-sidebar-a" href="#">Promo codes</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-cog"></i>
+            <a class="dashboard-sidebar-a" href="#">Account settings</a>
+        </div>
+    </div>
+
+    <div class="dashboard-userinfo">
+        <div class="dashboard-info-container">
+            <h2 class="dashboard-info-h2">Account Information</h2>
+            <span class="dashboard-info-span">Email</span>
+            <span class="dashboard-info-span">{{#getLatestUser data.user}}{{email}}{{/getLatestUser}}</span>
+            <button class="change-button">Change</button>
+            <span class="dashboard-info-span">Password</span>
+            <span class="dashboard-info-span">{{#getLatestUser data.user}}{{password}}{{/getLatestUser}}</span>
+            <button class="change-button">Change</button>
+        </div>
+        <div class="dashboard-info-container">
+            <h2 class="dashboard-info-h2">Personal Information</h2>
+            <span>
+                <span class="dashboard-info-span">First Name</span>
+                <span class="dashboard-info-span">{{#getLatestUser data.user}}{{fName}}{{/getLatestUser}}</span>
+                <span class="dashboard-info-span">Last Name</span>
+                <span class="dashboard-info-span">{{#getLatestUser data.user}}{{lName}}{{/getLatestUser}}</span>
+                <button class="change-button change-button-name">Change</button>
+            </span>
+        </div>
+    </div>
+
 </div>
+
