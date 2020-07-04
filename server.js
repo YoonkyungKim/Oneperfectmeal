@@ -137,14 +137,14 @@ app.post("/login", (req, res) => {
 })
 
 var transporter = nodemailer.createTransport({
-    // service: 'gmail',
-    host: 'smtp.mailtrap.io',
+    service: 'gmail',
+    // host: 'smtp.mailtrap.io',
     port: 2525,
     auth: {
-        user: '6eeef2d984e75a',
-        pass: '884696155e68cd'
-        // user: 'lh849678@gmail.com',
-        // pass: 'dkahsemvlzks11~'
+        // user: '6eeef2d984e75a',
+        // pass: '884696155e68cd'
+        user: 'lh849678@gmail.com',
+        pass: 'dkahsemvlzks11~'
     }
 });
 
