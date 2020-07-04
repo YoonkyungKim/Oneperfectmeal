@@ -487,7 +487,6 @@ p {
 .dashboard-info-span {
     display: inline-block;
     width: 33%;
-    /* line-height: 1.8; */
     padding: 0.5% 0;
     font-weight: 400;
     color: #393939;
@@ -495,13 +494,10 @@ p {
 
 .change-button {
     border-radius: 0.2em;
-    /* border: solid 1px #E5226D; */
     border: none;
-    /* font-family: 'Noto Sans JP'; */
     font-size: 0.9rem;
     font-weight: 700;
     padding: 0.5% 2%;
-    /* margin: 4px 0; */
     color: #E5226D;
     background-color: #FFFFFF;
 }
@@ -792,15 +788,12 @@ p {
 }
 
 @media (max-width: 576px) { 
-
-    .hero-container {
-        line-height: 370px;
-        max-height: 250px;
-        text-align: center;
+    .content-heading h3 {
+        font-size: 1.5rem;
     }
-    
+
     .hero-large {
-        max-height: 430px;
+        max-height: 400px;
     }
 
     .hero-img {
@@ -811,6 +804,19 @@ p {
     .hero-text {
         font-size: 2.3rem;
         margin-top: 7%;
+    }
+
+    .hero-btn {
+        padding: 2.5%;
+        font-size: 0.5rem;
+    }
+
+    .banner-only-text-p {
+        margin: 5px;
+    }
+
+    .banner-btn {
+        margin: 10px 0;
     }
 
     .form-container{
@@ -845,8 +851,34 @@ p {
 
     /* dashboard */
 
+    .dashboard-info-container {
+        padding: 5%;
+    }
+
+    .dashboard-info-h2 {
+        font-size: 1.3rem;
+    }
     .dashboard-p {
-        font-size: 0.9rem;
+        font-size: 1rem;
         margin-bottom: 2%;
+    }
+
+    .dashboard-info-span {
+        font-size: 0.8rem;
+    }
+
+    .change-button {
+        float: right;
+        margin-left: 20px;
+        font-size: 0.8rem;
+    }
+
+    .banner-text {
+        font-size: 2rem;
+    }
+
+    .top-meal-h3 {
+        font-size: 1.5rem;
+        padding: 0 4%;
     }
 }
