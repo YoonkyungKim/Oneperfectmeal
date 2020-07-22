@@ -117,10 +117,10 @@ var data = {
             button: false
         },
         {
-            page: "afterSignup",
-            text: "",
+            page: "welcome",
+            text: "Welcome to Oneperfectmeal!",
             img: "./img/banner-4.jpg",
-            imgAlt: "afterSignup-hero",
+            imgAlt: "welcome-hero",
             button: false
         }
     ],

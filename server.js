@@ -58,7 +58,7 @@ function onHttpStart(){
 app.use(clientSessions({
     cookieName: "session",
     secret: "funnyandexcitingoneperfectmeal", // long un-guessable string
-    duration: 10 * 60 * 1000,  // duration of the session in milliseconds (10 min)
+    duration: 2 * 60 * 60 * 1000,  // duration of the session in milliseconds (2 hours)
     activeDuration: 1000 * 60  // the session will be extended by this many ms each req (1 min)
 }));
 
