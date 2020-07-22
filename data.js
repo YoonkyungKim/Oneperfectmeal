@@ -12,134 +12,7 @@ module.exports.getData = function(){
     });       
 }
 
-module.exports.validateLogin = function(inData){
-    
-    return new Promise(function(resolve, reject){
-
-        var valid = true;
-        for (let key in inData){
-            if (inData.hasOwnProperty(key)){
-                if (inData[key] === null || inData[key].trim().length === 0){
-                    data.loginError[key] = "This field is required.";
-                    valid = false;
-                } else {
-                    data.loginError[key] = "";
-                }
-            }
-        }
-        
-        if (valid){
-            resolve();
-        } else {
-            reject();
-        }
-    })
-}
-
-module.exports.validateSignup = function(inData){
-    return new Promise(function(resolve, reject){
-        var valid = true;
-        for (let key in inData){
-            if (inData.hasOwnProperty(key)){
-                if (inData[key] === null || inData[key].trim().length === 0){
-                    data.signupError[key] = "This field is required.";
-                    valid = false;
-                } else {
-                    data.signupError[key] = "";
-                }
-            }
-        }
-        
-        // if password doesn't get the error message yet, validate using other criterias
-        if (data.signupError['password'] === "") {
-            var re = new RegExp("^[A-Za-z0-9]+$");
-            if (inData.password.trim().length >= 6 && inData.password.trim().length <= 12) {
-                if (!re.test(inData.password)) {
-                    data.signupError.password = "Password must have letters and numbers only.";
-                    valid = false;
-                } else {
-                    data.signupError.password = "";
-                }
-            } else {
-                if (!re.test(inData.password)) {
-                    data.signupError.password = "Password must have letters and numbers only and must be 6 to 12 characters.";
-                } else {
-                    data.signupError.password = "Password must be 6 to 12 characters.";
-                } 
-                valid = false;
-            }
-        }
-
-        // if first name doesn't get the error message yet, validate using another criteria
-        if (data.signupError['fName'] === "") {
-            var re = new RegExp("^[A-Za-z]{2,}$");
-            if (!re.test(inData.fName)){
-                data.signupError.fName = "First name must have letters only and must be longer than one letter.";
-                valid = false;
-            } else {
-                data.signupError.fName = "";
-            }
-        }
-
-        // if last name doesn't get the error message yet, validate using another criteria
-        if (data.signupError['lName'] === "") {
-            var re = new RegExp("^[A-Za-z]{2,}$");
-            if (!re.test(inData.lName)){
-                data.signupError.lName = "Last name must have letters only and must be longer than one letter.";
-                valid = false;
-            } else {
-                data.signupError.lName = "";
-            }
-        }
-        
-        // if email doesn't get the error message yet, validate using another criteria
-        if (data.signupError['email'] === "") {
-            var re = new RegExp("^[A-Za-z0-9_]+\.*[A-Za-z0-9_]+@[A-Za-z0-9]+\.[A-Za-z]{2,3}$");
-            if (!re.test(inData.email)){
-                data.signupError.email = "Username cannot start/end with a period & top level domain must be 2-3 characters";
-                valid = false;
-            } else {
-                data.signupError.email = "";
-            }
-        }
-
-        if (valid){
-            // store the user's first name to the dashboard page's text
-            data.hero[4].text = inData.fName;
-            resolve();
-        } else {
-            reject();
-        }
-    })
-}
-
-module.exports.storeUserInfo = function(inData){
-    return new Promise(function(resolve, reject){
-        if (data.user.push(inData)){    
-        console.log(data.user);
-            resolve();
-        } else {
-            reject();
-        }
-    })
-}
-
 var data = {
-    user: [],
-    loginError: [
-        {
-            email: "",
-            password: ""
-        }
-    ],
-    signupError: [
-        {
-            fName: "",
-            lName: "",
-            email: "",
-            password: ""
-        }
-    ],
     mealPackage: [
         {
             name: "Protein-Rich",
@@ -244,10 +117,10 @@ var data = {
             button: false
         },
         {
-            page: "dashboard",
+            page: "afterSignup",
             text: "",
             img: "./img/banner-4.jpg",
-            imgAlt: "dashboard-hero",
+            imgAlt: "afterSignup-hero",
             button: false
         }
     ],
@@ -275,6 +148,32 @@ var data = {
             img: "./img/content-4.jpg",
             imgAlt: "Replay-image",
             text: "Subscribe whenever you want"
+        }
+    ],
+    singleMeal: [
+        {
+            name: "Tofu",
+            price: 12.99,
+            category: "protein",
+            synopsis: "Grilled tofu with mushrooms",
+        },
+        {
+            name: "Eggs",
+            price: 14.99,
+            category: "protein",
+            synopsis: "Eggs cooked in the style you want"
+        },
+        {
+            name: "Pancakes",
+            price: 11.99,
+            category: "breakfast",
+            synopsis: "Pancakes with banana and maple syrup"
+        },
+        {
+            name: "Chicken",
+            price: 15.99,
+            category: "protein",
+            synopsis: "Fried chicken with potatos"
         }
     ]
 }

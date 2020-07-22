@@ -1,5 +1,19 @@
 {{!-- hero section for login page --}}
+{{#if afterRegister}}
+{{> hero data.hero.[4]}}
+{{else}}
 {{> hero data.hero.[3]}}
+{{/if}}
+
+{{!-- after registration, welcome message --}}
+{{#if afterRegister}}
+<div class="welcome-text-box">
+    <p class="welcome-p">Your registration is complete.</p>
+    <p class="welcome-p">Now you are all set to place your first order!</p>
+    <p class="welcome-p">Log in and go to look around the meals!</p>
+</div>
+{{/if}}
+
 {{!-- Form for login --}}
 {{> form}}
 

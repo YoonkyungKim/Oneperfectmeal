@@ -1,29 +1,43 @@
 <div class="form-wrapper">
     <div class="form-container">
-        <h1 class="form-heading">{{#ifSame page "register"}}Registration{{/ifSame}}{{#ifSame page "login"}}Log In{{/ifSame}}</h1>
+        <h1 class="form-heading {{#if afterRegister}}form-heading-welcome{{/if}}">{{#ifSame page "register"}}Registration{{/ifSame}}{{#ifSame page "login"}}Log In{{/ifSame}}</h1>
         <form class="register-form" {{#ifSame page "register"}}action="/register"{{/ifSame}}{{#ifSame page "login"}}action="/login"{{/ifSame}} method="POST">
             {{#ifSame page "register"}}
             <div class="signup-input-container">
-                <label for="fName">First Name</label>
-                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="fName" id="fName" placeholder="First Name" value="{{#if errorMessage}}{{formData.fName}}{{/if}}">
-                {{#if errorMessage}}<span class="inputErrorMessage">{{data.signupError.fName}}</span>{{/if}}        
+                <label class="signup-input-label" for="fName">First Name</label>
+                <input {{#if error}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="fName" id="fName" placeholder="First Name" value="{{#if error}}{{formData.fName}}{{/if}}">
+                {{#if error}}<span class="inputErrorMessage">{{errData.signupError.fName}}</span>{{/if}}        
             </div>
             <div class="signup-input-container">
-                <label for="lName">Last Name</label>
-                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="lName" id="lName" placeholder="Last Name" value="{{#if errorMessage}}{{formData.lName}}{{/if}}">
-                {{#if errorMessage}}<span class="inputErrorMessage">{{data.signupError.lName}}</span>{{/if}}
+                <label class="signup-input-label" for="lName">Last Name</label>
+                <input {{#if error}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="text" name="lName" id="lName" placeholder="Last Name" value="{{#if error}}{{formData.lName}}{{/if}}">
+                {{#if error}}<span class="inputErrorMessage">{{errData.signupError.lName}}</span>{{/if}}
             </div>
             {{/ifSame}}
             <div class="signup-input-container">
-                <label for="email">Email</label>
-                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="email" name="email" id="email" placeholder="Email" value="{{#if errorMessage}}{{formData.email}}{{/if}}">
-                {{#if errorMessage}}<span class="inputErrorMessage">{{#ifSame page "login"}}{{data.loginError.email}}{{/ifSame}}{{#ifSame page "register"}}{{data.signupError.email}}{{/ifSame}}</span>{{/if}}
+                <label class="signup-input-label" for="email">Email</label>
+                <input {{#if errData}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="email" name="email" id="email" placeholder="Email" value="{{#if error}}{{formData.email}}{{/if}}">
+                {{#if errData}}<span class="inputErrorMessage">{{#ifSame page "login"}}{{errData.loginError.email}}{{/ifSame}}{{#ifSame page "register"}}{{errData.signupError.email}}{{/ifSame}}</span>{{/if}}
             </div>
             <div class="signup-input-container">
-                <label {{#ifSame page "login"}}class="login-password-label"{{/ifSame}} for="password">Password{{#ifSame page "login"}}<span class="password-reset"><a class="password-reset-link"href="#">Forgot password?</a></span>{{/ifSame}}</label>
-                <input {{#if errorMessage}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="password" name="password" id="password" placeholder="Password" value="{{#if errorMessage}}{{formData.password}}{{/if}}" {{#ifSame page "login"}}autocomplete="current password"{{/ifSame}}{{#ifSame page "register"}}autocomplete="new password"{{/ifSame}}>
-                {{#if errorMessage}}<span class="inputErrorMessage">{{#ifSame page "login"}}{{data.loginError.password}}{{/ifSame}}{{#ifSame page "register"}}{{data.signupError.password}}{{/ifSame}}</span>{{/if}}
+                <label class="signup-input-label {{#ifSame page "login"}}login-password-label{{/ifSame}}" for="password">Password{{#ifSame page "login"}}<span class="password-reset"><a class="password-reset-link"href="#">Forgot password?</a></span>{{/ifSame}}</label>
+                <input {{#if errData}}style="margin-bottom: 0;"{{/if}} class="signup-input" type="password" name="password" id="password" placeholder="Password" value="{{#if error}}{{formData.password}}{{/if}}" {{#ifSame page "login"}}autocomplete="current password"{{/ifSame}}{{#ifSame page "register"}}autocomplete="new password"{{/ifSame}}>
+                {{#if errData}}<span class="inputErrorMessage">{{#ifSame page "login"}}{{errData.loginError.password}}{{/ifSame}}{{#ifSame page "register"}}{{errData.signupError.password}}{{/ifSame}}</span>{{/if}}
             </div>
+            <div class="signup-input-container">
+                <label class="signup-input-label signup-checkbox-label" for="admin">{{#ifSame page "register"}}Sign up as a manager?{{/ifSame}}{{#ifSame page "login"}}Are you a manager?{{/ifSame}}</label>
+                <input class="signup-input signup-checkbox" type="checkbox" name="admin" id="admin" value="Sign up as a content manager?">
+            </div>
+            {{#if invalidUser}}
+            <div class="invalid-user-message-box">
+                Incorrect password, email or user type.
+            </div>
+            {{/if}}
+            {{#if errormsg}}
+            <div class="invalid-user-message-box">
+                {{errormsg}}
+            </div>
+            {{/if}}
             <div class="signup-input-container">
                 <input class="signup-submit" type="submit" name="submit" id="submit" value="{{#ifSame page "register"}}SIGN UP{{/ifSame}}{{#ifSame page "login"}}SIGN IN{{/ifSame}}">
             </div>

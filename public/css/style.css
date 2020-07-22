@@ -348,7 +348,7 @@ p {
     text-align: left;   
 }
 
-.signup-input, .signup-input-container label {
+.signup-input, .signup-input-label {
     display: inline-block;
     width: 100%;
     clear: both;
@@ -357,9 +357,23 @@ p {
 
 .signup-input {
     padding: 2% 3%;
-    margin: 0 0 4% 0;
+    margin-bottom: 4%;
     border: 1px solid #d3d3d3;
     border-radius: 4px; 
+}
+
+.signup-checkbox {
+    width: 5%;
+    float: right;
+    margin-top: 4%;
+    vertical-align: middle;
+}
+
+.signup-checkbox-label {
+    margin: 2% 0 6% 0;
+    width: 92%;
+    font-size: 0.9rem;
+    color: #393939;
 }
 
 .signup-input::placeholder {
@@ -406,35 +420,52 @@ p {
     color: #E5226D;
 }
 
+.invalid-user-message-box {
+    background-color: #fabed5;
+    border-radius: 0.2em;
+    /* border: 1px solid #E5226D; */
+    padding: 3%;
+    margin-bottom: 15px;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: #E5226D;
+}
+
+/* welcome */
+
+.welcome-p {
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.1;
+    color: #472527;
+}
+
+.hero-text-welcome {
+    line-height: 1.5;
+    font-size: 3.2rem;
+    margin-top: 3.5%;
+}
+
+.welcome-text-box {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    margin: 4% 0 -4% 0;
+}
+
+.form-heading-welcome {
+    margin: -75px auto 10% auto;
+}
+
 /* dashboard */
 
 .hero-dashboard {
     max-height: 390px;
 }
 
-.hero-text-dashboard {
-    line-height: 1.5;
-    font-size: 3.2rem;
-    margin-top: 3.5%;
-}
-
 .dashboard-wrapper {
     display: grid;
     grid-template-columns: 1fr 3fr;
     background-color: #f7f7f7;
-}
-
-.dashboard-text-box {
-    grid-column-start: 1;
-    grid-column-end: 4;
-    margin: 4% 0 1.7% 0;
-}
-
-.dashboard-p {
-    font-size: 1.2rem;
-    font-weight: 400;
-    line-height: 1.1;
-    color: #472527;
 }
 
 .dashboard-shop-button {
@@ -579,6 +610,7 @@ p {
     .form-heading {
         width: 50%;
         font-size: 1.2rem;
+        /* margin: -53px auto 10% auto; */
         margin-top: -53px;
         margin-bottom: 10%;
         color: #3d1518; 

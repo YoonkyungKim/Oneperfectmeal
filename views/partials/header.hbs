@@ -11,6 +11,18 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                 <div class="navbar-container">
                     <ul class="navbar-nav header-navbar">
+                        
+                        {{#if loggedIn}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="meals-package">Meal Packages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard">My account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout">Logout</a>
+                        </li>
+                        {{else}}
                         <li class="nav-item">
                             <a class="nav-link" href="meals-package">Meal Packages</a>
                         </li>
@@ -20,6 +32,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="login">Login</a>
                         </li>
+                        {{/if}}
+                        
                     </ul>
                 </div>
                 <form class="form-inline form-search my-2 my-lg-0">

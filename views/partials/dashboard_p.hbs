@@ -1,0 +1,48 @@
+{{!-- hero section for dashboard page --}}
+{{> hero data.hero.[4]}}
+
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-sidebar">  
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-utensils"></i>
+            <a class="dashboard-sidebar-a" href="#">{{#if user.admin}}Add packages{{else}}Your Order{{/if}}</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-star"></i>
+            <a class="dashboard-sidebar-a" href="#">{{#if user.admin}}Edit packages{{else}}Premium{{/if}}</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-percentage"></i>
+            <a class="dashboard-sidebar-a" href="#">{{#if user.admin}}Statistics{{else}}Promo codes{{/if}}</a>
+        </div>
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-cog"></i>
+            <a class="dashboard-sidebar-a" href="#">Account settings</a>
+        </div>
+    </div>
+
+    <div class="dashboard-userinfo">
+        <div class="dashboard-info-container">
+            <h2 class="dashboard-info-h2">Account Information</h2>
+            <span class="dashboard-info-span">Email</span>
+            <span class="dashboard-info-span">{{user.email}}</span>
+            <button class="change-button">Change</button>
+            <span class="dashboard-info-span">Password</span>
+            <span class="dashboard-info-span">●●●●●●</span>
+            <button class="change-button">Change</button>
+        </div>
+        <div class="dashboard-info-container">
+            <h2 class="dashboard-info-h2">Personal Information</h2>
+            <span>
+                <span class="dashboard-info-span">First Name</span>
+                <span class="dashboard-info-span">{{user.fName}}</span>
+                <span class="dashboard-info-span">Last Name</span>
+                <span class="dashboard-info-span">{{user.lName}}</span>
+                <button class="change-button change-button-name">Change</button>
+            </span>
+        </div>
+    </div>
+
+</div>
+
