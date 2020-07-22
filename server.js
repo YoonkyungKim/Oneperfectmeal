@@ -3,6 +3,10 @@
 // Heroku link: https://sheltered-beyond-52937.herokuapp.com/
 // Github link: https://github.com/YoonkyungKim/WEB322-Oneperfectmeal
 
+// Following the professor's recommendation, I made the app to redirect the user to the login page showing the welcome message instead of dashboard page, once the account is created.
+// You can choose the user type when you sign up. If you choose to sign up as a manager, you are signed up as a data entry clerk.
+// To reduce complexity, I split the module with object type data (meal package data etc.) and the module containing the code that connects to the database and validate user input etc. into two files.
+// (data.js & db.js)
 
 const express = require("express");
 const exphbs = require("express-handlebars");
@@ -14,7 +18,6 @@ const db = require("./db");
 const path = require("path");
 
 const clientSessions = require("client-sessions");
-// require('dotenv').config()
 
 // Handlebars setup
 // register handlebars as the rendering engine for views
@@ -63,7 +66,7 @@ app.use(clientSessions({
 }));
 
 app.get("/", (req, res) => {
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         if (req.session.user){
             res.render("index", { 
                 data: inData, 
@@ -80,7 +83,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/meals-package", (req, res) => {
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         if (req.session.user){
             res.render("mealsPackage", { 
                 data: inData,
@@ -95,7 +98,7 @@ app.get("/meals-package", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         res.render("registration", { 
             data: inData, 
             page: "register" 
@@ -104,7 +107,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         res.render("login", { 
             data: inData,
             page: "login"
@@ -115,7 +118,7 @@ app.get("/login", (req, res) => {
 
 // dashboard: private route
 app.get("/dashboard", (req, res) => {
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         if (req.session.user){
             if (req.session.user.admin){
                 res.render("clerk_dashboard", {
@@ -148,7 +151,7 @@ app.post("/login", (req, res) => {
         password: req.body.password.trim()
     }
 
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         db.validateLogin(req.body).then(() =>{
             db.validateUser(req.body)
             .then((userData)=>{
@@ -220,7 +223,7 @@ app.post("/register", (req, res) => {
         text: `Hey ${inputData.fName}, welcome to Oneperfectmeal. Enjoy a delicious and varied meal prepared for you!`
     };
         
-    ds.getData().then((inData)=>{
+    ds.getLocalData().then((inData)=>{
         db.validateSignup(req.body)
         .then(() =>{
             db.addUser(req.body)

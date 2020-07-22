@@ -6,7 +6,7 @@
 // social media icons:
 // https://fontawesome.com/
 
-module.exports.getData = function(){
+module.exports.getLocalData = function(){
     return new Promise(function(resolve, reject){
         resolve(data);
     });       
