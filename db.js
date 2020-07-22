@@ -176,7 +176,7 @@ module.exports.addUser = function(data){
             newUser.save((err)=>{
                 if (err){
                     console.log("fail to save the user!" + err);
-                    reject("The user with this email already exist.");
+                    reject("The user with this email already exists.");
                 } else {
                     console.log("Saved the user" + data.name);
                     resolve();
