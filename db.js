@@ -126,7 +126,7 @@ module.exports.validateSignup = function(inData){
         if (errData.signupError['email'] === "") {
             var re = new RegExp("^[A-Za-z0-9_]+\.*[A-Za-z0-9_]+@[A-Za-z0-9]+\.[A-Za-z]{2,3}$");
             if (!re.test(inData.email)){
-                errData.signupError.email = "Username cannot start/end with a period & top level domain must be 2-3 characters";
+                errData.signupError.email = "Username must be at least 2 characters that don't start/end with a period & top level domain must be 2-3 characters";
                 valid = false;
             } else {
                 errData.signupError.email = "";
@@ -160,36 +160,34 @@ module.exports.getUserByEmail = function(inEmail){
 
 module.exports.addUser = function(data){
     return new Promise((resolve, reject) => {
-        this.validateSignup(data).then(() => {
-            // see if admin has been checked
-            data.admin = (data.admin) ? true : false;
-            // add data to local User collection
-            // local only
-            // only works if the field names are the same. (case sensitive)
-            var newUser = new Users(data);
-            bcrypt.genSalt(10) // generate a salt using 10 rounds
-            .then(salt=>bcrypt.hash(newUser.password, salt))
-            .then(hash => { // hash: encrypted password returned
-                // store the hashed password to DB
-                newUser.password = hash;
-                console.log(newUser);
-                // try to save entry to our database
-                newUser.save((err)=>{
-                    if (err){
-                        console.log("fail to save the user!" + err);
-                        reject("The user with this email already exist.");
-                    } else {
-                        console.log("Saved the user" + data.name);
-                        resolve();
-                    }
-                });
-            })
-            .catch(err=>{
-                console.log(err);
-                reject("Hashing error");
+        // see if admin has been checked
+        data.admin = (data.admin) ? true : false;
+        // add data to local User collection
+        // local only
+        // only works if the field names are the same. (case sensitive)
+        var newUser = new Users(data);
+        bcrypt.genSalt(10) // generate a salt using 10 rounds
+        .then(salt=>bcrypt.hash(newUser.password, salt))
+        .then(hash => { // hash: encrypted password returned
+            // store the hashed password to DB
+            newUser.password = hash;
+            console.log(newUser);
+            // try to save entry to our database
+            newUser.save((err)=>{
+                if (err){
+                    console.log("fail to save the user!" + err);
+                    reject("The user with this email already exist.");
+                } else {
+                    console.log("Saved the user" + data.name);
+                    resolve();
+                }
             });
+        })
+        .catch(err=>{
+            console.log(err);
+            reject("Hashing error");
         });
-    });
+    })
 }
 
 module.exports.validateUser = (data) => {
@@ -214,7 +212,9 @@ module.exports.validateUser = (data) => {
                         reject("password doesn't match");
                         return;
                     }
-                });
+                }).catch(()=>{
+                    console.log("bcrypt compare error");
+                })
             }).catch((err) => { // catch getUserByEmail error
                 reject(err);
                 return;

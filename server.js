@@ -221,28 +221,43 @@ app.post("/register", (req, res) => {
     };
         
     ds.getData().then((inData)=>{
-        db.addUser(req.body).then(() => {
-            transporter.sendMail(mailOptions, (err, info)=> {
-                if (err){
-                    console.log(err);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
+        db.validateSignup(req.body)
+        .then(() =>{
+            db.addUser(req.body)
+            .then(() => {
+                transporter.sendMail(mailOptions, (err, info)=> {
+                    if (err){
+                        console.log(err);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                })
+                // if the user is successfully added, render login page
+                res.render("login", { 
+                    data: inData,
+                    page: "login",
+                    afterRegister: true
+                });
+            }).catch((msg)=>{
+                console.log("data fail to stored");
+                res.render("registration", {
+                    error: true,
+                    data: inData,
+                    formData: inputData,
+                    page: "register",
+                    errormsg: msg
+                });
             })
-            res.render("login", { 
-                data: inData,
-                page: "login",
-                afterRegister: true
-            });
-        }).catch((msg)=>{
-            console.log("data fail to stored");
-            res.render("registration", {
-                error: true,
-                data: inData,
-                formData: inputData,
-                page: "register",
-                errormsg: msg
-            });
+        }).catch(()=> {
+            db.getErrData().then((errorData)=>{
+                res.render("registration", {
+                    data: inData,
+                    error: true,
+                    errData: errorData,
+                    formData: inputData,
+                    page: "register"
+                });
+            })
         })
     })
 });
