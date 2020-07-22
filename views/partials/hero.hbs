@@ -3,8 +3,7 @@
     <div class="hero-container banner-container {{#if button}}hero-large{{/if}}{{#ifSame page "dashboard"}}hero-dashboard{{/ifSame}}">
         <img class="hero-img" src={{img}} alt={{imgAlt}}>
         <div class="text-container banner-text-container">
-            <h1 class="hero-text">{{text}}</h1>
-            
+            <h1 class="hero-text {{#ifSame page "welcome"}}hero-text-welcome{{/if}}">{{text}}</h1>
             {{#if button}}
                 <button type="button" class="btn btn-dark btn-lg hero-btn">VIEW PACKAGES</button>
                 <button type="button" class="btn btn-outline-primary btn-lg hero-btn">BUILD YOUR ORDER</button>
