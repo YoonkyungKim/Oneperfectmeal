@@ -5,7 +5,7 @@
 
 // Following the professor's recommendation, I made the app to redirect the user to the login page showing the welcome message instead of dashboard page, once the account is created.
 // You can choose the user type when you sign up. If you choose to sign up as a manager, you are signed up as a data entry clerk.
-// To reduce complexity, I split the module with object type data (meal package data etc.) and the module containing the code that connects to the database and validate user input etc. into two files.
+// To reduce complexity, I separated the module that contains object type data (meal package etc.) and the module dealing with database and user input validation into two files.
 // (data.js & db.js)
 
 const express = require("express");
