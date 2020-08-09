@@ -11,13 +11,13 @@
         
             <div class="input-container">
                 <label class="input-label" for="name">Meal Package Name:</label>
-                <input {{#if errMsg.mealPError.name}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="name" name="name" type="text" value="{{data.name}}">
+                <input {{#if errMsg.mealPError.name}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="name" name="name" type="text" {{#if errMsg.mealPError.name}}value=""{{else}}value="{{data.name}}"{{/if}}>
                 {{#if errMsg.mealPError.name}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.name}}</span>{{/if}}
             </div>
         
             <div class="input-container">
                 <label class="input-label" for="price">Price</label>
-                <input {{#if errMsg.mealPError.price}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="price" name="price" type="number" step=".01" value="{{data.price}}">
+                <input {{#if errMsg.mealPError.price}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="price" name="price" type="number" step=".01" {{#if errMsg.mealPError.price}}value=""{{else}}value="{{data.price}}"{{/if}}>
                 {{#if errMsg.mealPError.price}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.price}}</span>{{/if}}
             </div>
         
@@ -38,7 +38,7 @@
         
             <div class="input-container">
                 <label class="input-label" for="no-of-meals">Number of meals</label>
-                <input {{#if errMsg.mealPError.noOfMeals}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" type="number" name="noOfMeals" id="noOfMeals" value="{{data.noOfMeals}}" />
+                <input {{#if errMsg.mealPError.noOfMeals}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" type="number" name="noOfMeals" id="noOfMeals" {{#if errMsg.mealPError.noOfMeals}}value=""{{else}}value="{{data.noOfMeals}}"{{/if}} />
                 {{#if errMsg.mealPError.noOfMeals}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.noOfMeals}}</span>{{/if}}
             </div>
         
