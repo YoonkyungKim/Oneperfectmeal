@@ -34,7 +34,10 @@ var mealPackageSchema = new Schema({
         type: Number,
         required: true
     },
-    description: String,
+    description: {
+        type: String,
+        required: true
+    },
     category: String,
     noOfMeals: {
         type: Number,
@@ -271,6 +274,7 @@ var errData = {
             mealPNumber: "",
             name: "",
             price: "",
+            description: "",
             noOfMeals: ""
         }
     ]

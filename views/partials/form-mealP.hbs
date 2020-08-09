@@ -23,7 +23,8 @@
         
             <div class="input-container">
                 <label class="input-label" for="description">Description</label>
-                <textarea class="input" id="description" name="description" rows="4" cols="50">{{data.description}}</textarea>
+                <textarea {{#if errMsg.mealPError.description}}style="margin-bottom: 0;"{{/if}} class="input" id="description" name="description" rows="4" cols="50">{{#if errMsg.mealPError.description}}{{else}}{{data.description}}{{/if}}</textarea>
+                {{#if errMsg.mealPError.description}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.description}}</span>{{/if}}
             </div>
             
             <div class="input-container">
