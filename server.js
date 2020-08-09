@@ -365,12 +365,12 @@ app.post("/addMealP", (req, res)=>{
                         name: req.body.name,
                         price: req.body.price,
                         description: req.body.description,
+                        category: req.body.category,
                         noOfMeals: req.body.noOfMeals,
                         topPackage: (req.body.topPackage) ? true : false
                     }
                     if (err === "ValidationError"){
                         console.log("required field empty");
-                        console.log(inputData.name);
                         db.getErrData().then((errorData)=>{
                             res.render("addMealPackage", {
                                 error: "NoRequiredField",
@@ -381,14 +381,17 @@ app.post("/addMealP", (req, res)=>{
                             });
                         })
                     } else {
-                        console.log("Error adding meal package: "+ err);
-                        res.render("addMealPackage", {
-                            error: "error",
-                            errMsg: err,
-                            page: "add",
-                            data: inputData,
-                            loggedIn: true
-                        });
+                        console.log("Error adding meal package: " + err);
+                        // console.log(inputData);
+                        db.getErrData().then((errorData)=>{
+                            res.render("addMealPackage", {
+                                error: "NoRequiredField",
+                                errMsg: errorData,
+                                page: "add",
+                                data: inputData,
+                                loggedIn: true
+                            });
+                        })
                     }               
                 }); 
             }

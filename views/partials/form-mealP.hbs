@@ -29,10 +29,10 @@
             <div class="input-container">
                 <label class="input-label" for="category">Category</label>
                 <select class="input category-dropdown" name="category" id="category">
-                    <option value="protein"{{#ifSame page "edit"}}{{#ifSame data.category "protein"}}selected{{/ifSame}}{{/ifSame}}>Protein</option>
-                    <option value="vegan"{{#ifSame page "edit"}}{{#ifSame data.category "vegan"}}selected{{/ifSame}}{{/ifSame}}>Vegan</option>
-                    <option value="vegetarian"{{#ifSame page "edit"}}{{#ifSame data.category "vegetarian"}}selected{{/ifSame}}{{/ifSame}}>Vegetarian</option>
-                    <option value="breakfast"{{#ifSame page "edit"}}{{#ifSame data.category "breakfast"}}selected{{/ifSame}}{{/ifSame}}>Breakfast</option>
+                    <option value="protein"{{#ifSame data.category "protein"}}selected{{/ifSame}}>Protein</option>
+                    <option value="vegan"{{#ifSame data.category "vegan"}}selected{{/ifSame}}>Vegan</option>
+                    <option value="vegetarian"{{#ifSame data.category "vegetarian"}}selected{{/ifSame}}>Vegetarian</option>
+                    <option value="breakfast"{{#ifSame data.category "breakfast"}}selected{{/ifSame}}>Breakfast</option>
                 </select>
             </div>
         
@@ -44,7 +44,7 @@
         
             <div class="input-container input container-margin">
                 <label class="checkbox-label" for="topPackage">Top Package</label>  
-                <input class="checkbox-input" id="topPackage" type="checkbox" name="topPackage" {{#ifSame page "edit"}}{{#if data.topPackage}}checked{{/if}}{{/ifSame}}>
+                <input class="checkbox-input" id="topPackage" type="checkbox" name="topPackage" {{#if data.topPackage}}checked{{/if}}>
             </div>
 
             <div class="input-container container-margin">

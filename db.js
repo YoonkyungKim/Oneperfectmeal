@@ -169,27 +169,6 @@ module.exports.validateSignup = function(inData){
     })
 }
 
-// module.exports.validateMealP = function(inData){
-    
-//     return new Promise(function(resolve, reject){
-//         var valid = true;
-      
-//         if (inData[name] === undefined || inData[name] === null || inData[name].trim().length === 0){
-//             errData.mealPError[name] = "This field is required.";
-//             valid = false;
-//         } 
-//         else {
-//             errData.mealError[name] = "";
-//         }
-        
-//         if (valid){
-//             resolve();
-//         } 
-//         else {
-//             reject();
-//         }
-//     })
-// }
 
 module.exports.getUserByEmail = function(inEmail){
     return new Promise((resolve, reject)=>{
@@ -337,14 +316,16 @@ module.exports.addMealPackage = function(data){
                 errData.mealPError[field] = "";
             }
             if (err){
-                console.log("fail to save the meal package!" + err);
+                console.log("fail to save the meal package! " + err);
                 if (err.name === 'ValidationError'){
                     for (field in err.errors){
                         errData.mealPError[field] = "This field is required.";
                     }
-                    reject(err.name);
                 }
-                reject(err);
+                if (err.code === 11000){
+                    errData.mealPError['mealPNumber'] = "Meal package with this number already exists.";
+                }
+                reject(err.name);
             } else {
                 console.log("Saved the meal package " + data.name);
                 resolve();
@@ -427,8 +408,6 @@ module.exports.editMealPackage = (editData)=>{
             image: editData.image
         }}, //find entry using name field
         { runValidators: true }, function(err){
-            // errMsg = err;
-            // console.log("fail to save the meal package!" + err);
             if (err && err.name === 'ValidationError'){
                 for (field in err.errors){
                     errData.mealPError[field] = "This field is required.";
