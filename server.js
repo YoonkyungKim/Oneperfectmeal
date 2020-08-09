@@ -308,7 +308,7 @@ app.get("/addMealP", (req, res)=>{
         if (req.session.user.admin){
             res.render("addMealPackage", {loggedIn: true});
         } else {
-            res.redirect("/dashboard");
+            res.redirect("/meals-package");
         }
     } else {
         res.redirect("/login");
@@ -405,24 +405,28 @@ app.post("/addMealP", (req, res)=>{
 // editMealP?mealPNumber=mealPNumber
 // private page to data clerk
 app.get("/editMealP", (req,res)=>{
-    if (req.session.user && req.session.user.admin){
-        console.log(req.query);
-        if (req.query.mealPNumber){ 
-            console.log("number exists in query");
-            db.getMealByNumber(req.query.mealPNumber).then((mealP)=>{
-                res.render("editMealPackage", {
-                    data: mealP,
-                    page: "edit",
-                    loggedIn: true
+    if (req.session.user){
+        if (req.session.user.admin){
+            console.log(req.query);
+            if (req.query.mealPNumber){ 
+                console.log("number exists in query");
+                db.getMealByNumber(req.query.mealPNumber).then((mealP)=>{
+                    res.render("editMealPackage", {
+                        data: mealP,
+                        page: "edit",
+                        loggedIn: true
+                    });
+                }).catch(()=>{
+                    console.log("couldn't find the meal package with this number");
+                    res.redirect("/meals-package");
                 });
-            }).catch(()=>{
-                console.log("couldn't find the meal package with this number");
+            }
+            else {
                 res.redirect("/meals-package");
-            });
-        }
-        else {
+            }  
+        } else {
             res.redirect("/meals-package");
-        }  
+        }
     } else {
         res.redirect("/login");
     }
