@@ -1,0 +1,73 @@
+<div class="form-wrapper">
+    <div class="form-container">
+        <h1 class="form-heading mealP-form-heading">{{#ifSame page "add"}}Create{{/ifSame}}{{#ifSame page "edit"}}Edit{{/ifSame}} Meal Package</h1>
+        <form method="post" action="{{#ifSame page "add"}}/addMealP{{/ifSame}}{{#ifSame page "edit"}}/editMealP{{/ifSame}}" enctype="multipart/form-data">
+            <div class="input-container">
+                <label class="input-label" for="name">Meal Package Number:</label>
+                {{!-- cannot edit meal package number once created. Thus, in the edit form, it is read-only --}}
+                <input {{#if errMsg.mealPError.mealPNumber}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="mealPNumber" name="mealPNumber" type="number" value="{{data.mealPNumber}}" {{#ifSame page "edit"}}readonly{{/ifSame}}>
+                {{#if errMsg.mealPError.mealPNumber}}<span class="inputErrorMessage addmeal-requiredErr">{{#ifSame page "add"}}{{errMsg.mealPError.mealPNumber}}{{/ifSame}}</span>{{/if}}
+            </div>
+        
+            <div class="input-container">
+                <label class="input-label" for="name">Meal Package Name:</label>
+                <input {{#if errMsg.mealPError.name}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="name" name="name" type="text" value="{{data.name}}">
+                {{#if errMsg.mealPError.name}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.name}}</span>{{/if}}
+            </div>
+        
+            <div class="input-container">
+                <label class="input-label" for="price">Price</label>
+                <input {{#if errMsg.mealPError.price}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" id="price" name="price" type="number" step=".01" value="{{data.price}}">
+                {{#if errMsg.mealPError.price}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.price}}</span>{{/if}}
+            </div>
+        
+            <div class="input-container">
+                <label class="input-label" for="description">Description</label>
+                <textarea class="input" id="description" name="description" rows="4" cols="50">{{data.description}}</textarea>
+            </div>
+            
+            <div class="input-container">
+                <label class="input-label" for="category">Category</label>
+                <select class="input category-dropdown" name="category" id="category">
+                    <option value="protein"{{#ifSame page "edit"}}{{#ifSame data.category "protein"}}selected{{/ifSame}}{{/ifSame}}>Protein</option>
+                    <option value="vegan"{{#ifSame page "edit"}}{{#ifSame data.category "vegan"}}selected{{/ifSame}}{{/ifSame}}>Vegan</option>
+                    <option value="vegetarian"{{#ifSame page "edit"}}{{#ifSame data.category "vegetarian"}}selected{{/ifSame}}{{/ifSame}}>Vegetarian</option>
+                    <option value="breakfast"{{#ifSame page "edit"}}{{#ifSame data.category "breakfast"}}selected{{/ifSame}}{{/ifSame}}>Breakfast</option>
+                </select>
+            </div>
+        
+            <div class="input-container">
+                <label class="input-label" for="no-of-meals">Number of meals</label>
+                <input {{#if errMsg.mealPError.noOfMeals}}style="margin-bottom: 0;"{{/if}} class="input {{#if error}}addmeal-input{{/if}}" type="number" name="noOfMeals" id="noOfMeals" value="{{data.noOfMeals}}" />
+                {{#if errMsg.mealPError.noOfMeals}}<span class="inputErrorMessage addmeal-requiredErr">{{errMsg.mealPError.noOfMeals}}</span>{{/if}}
+            </div>
+        
+            <div class="input-container input container-margin">
+                <label class="checkbox-label" for="topPackage">Top Package</label>  
+                <input class="checkbox-input" id="topPackage" type="checkbox" name="topPackage" {{#ifSame page "edit"}}{{#if data.topPackage}}checked{{/if}}{{/ifSame}}>
+            </div>
+
+            <div class="input-container container-margin">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile" name="photo">
+                    <label class="custom-file-label" for="customFile">Choose image</label>
+                </div>
+                {{#ifSame error "NoFile"}}
+                    <div class="err-message-box addmeal-err-message">{{errMsg}}</div>
+                {{/ifSame}}
+                
+            </div>
+
+            <div class="input-container">
+                <input class="signup-submit" type="submit" name="submit" id="submit" value="submit">
+            </div>      
+        </form>
+    </div>
+</div>
+
+{{!-- for bootstrap file input shows the selected image file name --}}
+<script>
+    $(document).ready(function() {
+        bsCustomFileInput.init()
+    });
+</script>

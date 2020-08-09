@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
 const { resolve } = require("path");
+mongoose.set('useCreateIndex', true);
 
 require('dotenv').config()
 
@@ -19,8 +20,34 @@ var userSchema = new Schema({
     admin: Boolean
 })
 
+var mealPackageSchema = new Schema({
+    mealPNumber: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: String,
+    category: String,
+    noOfMeals: {
+        type: Number,
+        required: true
+    },
+    topPackage: Boolean,
+    image: String
+})
+
 // local user template schema (local copy)
 let Users;
+
+let MealPackages;
 
 module.exports.initialize = function(){
     return new Promise((resolve, reject) => {
@@ -35,6 +62,7 @@ module.exports.initialize = function(){
             // create a collection called users in mongoDB
             // and copy it to local variable
             Users = db.model("users", userSchema);
+            MealPackages = db.model("mealPackages", mealPackageSchema);
             resolve();
         });
     });
@@ -141,6 +169,28 @@ module.exports.validateSignup = function(inData){
     })
 }
 
+// module.exports.validateMealP = function(inData){
+    
+//     return new Promise(function(resolve, reject){
+//         var valid = true;
+      
+//         if (inData[name] === undefined || inData[name] === null || inData[name].trim().length === 0){
+//             errData.mealPError[name] = "This field is required.";
+//             valid = false;
+//         } 
+//         else {
+//             errData.mealError[name] = "";
+//         }
+        
+//         if (valid){
+//             resolve();
+//         } 
+//         else {
+//             reject();
+//         }
+//     })
+// }
+
 module.exports.getUserByEmail = function(inEmail){
     return new Promise((resolve, reject)=>{
         Users.find({email: inEmail})
@@ -160,8 +210,8 @@ module.exports.getUserByEmail = function(inEmail){
 
 module.exports.addUser = function(data){
     return new Promise((resolve, reject) => {
-        // see if admin has been checked
-        data.admin = (data.admin) ? true : false;
+        // by default, admin is false. If you want to set the user to data clerk, change admin value manually in Atlas
+        data.admin = false;
         // add data to local User collection
         // local only
         // only works if the field names are the same. (case sensitive)
@@ -178,7 +228,7 @@ module.exports.addUser = function(data){
                     console.log("fail to save the user!" + err);
                     reject("The user with this email already exists.");
                 } else {
-                    console.log("Saved the user" + data.name);
+                    console.log("Saved the user" + data.fName);
                     resolve();
                 }
             });
@@ -196,17 +246,10 @@ module.exports.validateUser = (data) => {
             this.getUserByEmail(data.email).then((retUser) => {
                 bcrypt.compare(data.password, retUser[0].password).then((result)=>{
                     if (result){
-                        // if given data's admin is unchecked, it is undefined, so make it to false
-                        data.admin = (data.admin) ? true : false;
-                        // check if member type matches
-                        if (data.admin === retUser[0].admin){
-                            const retUserCopy = Object.assign({}, retUser[0]);
-                            delete retUserCopy.password;
-                            // send the object that doesn't have password
-                            resolve(retUserCopy);
-                        } else {
-                            reject("member type doesn't match");
-                        }   
+                        const retUserCopy = Object.assign({}, retUser[0]);
+                        delete retUserCopy.password;
+                        // send the object that doesn't have password
+                        resolve(retUserCopy);  
                     }
                     else {
                         reject("password doesn't match");
@@ -243,6 +286,14 @@ var errData = {
             email: "",
             password: ""
         }
+    ],
+    mealPError: [
+        {
+            mealPNumber: "",
+            name: "",
+            price: "",
+            noOfMeals: ""
+        }
     ]
 }
 
@@ -259,6 +310,139 @@ module.exports.getUsers = function(){
         }).catch((err) => {
             console.log("Error retrieving user" + err);
             reject(err);
+        });
+    });
+}
+
+module.exports.addMealPackage = function(data){
+    return new Promise((resolve, reject) => {
+
+        // see if topPackage has been checked
+        data.topPackage = (data.topPackage) ? true : false;
+
+        //set data to null if it is an empty string ""
+        for (var field in data){
+            if (data[field] == "")
+                data[field] = null;
+        }
+
+        // add data to local MealPackage collection
+        // local only
+        // only works if the field names are the same. (case sensitive)
+        var newMealPackage = new MealPackages(data);
+        
+        // try to save entry to our database
+        newMealPackage.save((err)=>{
+            for (field in errData.mealPError){
+                errData.mealPError[field] = "";
+            }
+            if (err){
+                console.log("fail to save the meal package!" + err);
+                if (err.name === 'ValidationError'){
+                    for (field in err.errors){
+                        errData.mealPError[field] = "This field is required.";
+                    }
+                    reject(err.name);
+                }
+                reject(err);
+            } else {
+                console.log("Saved the meal package " + data.name);
+                resolve();
+            }
+        });
+    })
+}
+
+module.exports.getMealPackages = function(){
+    return new Promise((resolve, reject)=>{
+        MealPackages.find() //
+        .exec() // tells mongoos that we should run find() as a promise
+        .then((returnedMealPackages)=>{
+            if (returnedMealPackages !== 0){
+                resolve(returnedMealPackages.map(item => item.toObject()));
+            } else {
+                reject("No meal packages found");
+            }
+        }).catch((err) => {
+            console.log("Error retrieving meal package" + err);
+            reject(err);
+        });
+    });
+}
+
+module.exports.getMealByName = function(inName){
+    return new Promise((resolve,reject)=>{
+        MealPackages.findOne({name: inName})
+        .exec() //run findOne as a promise.
+        .then((returnedMealP)=>{
+            if(returnedMealP){
+                returnedMealP = returnedMealP.toObject();
+                console.log(returnedMealP);
+                resolve(returnedMealP);
+            }
+            else{
+                reject("No meal package found");
+            } 
+        }).catch((err)=>{
+            console.log("Error Retriving meal package: " + err);
+            reject(err);
+        });
+    });
+}
+
+module.exports.getMealByNumber = function(inNumber){
+    return new Promise((resolve,reject)=>{
+        MealPackages.findOne({mealPNumber: inNumber})
+        .exec() //run findOne as a promise.
+        .then((returnedMealP)=>{
+            if(returnedMealP){
+                returnedMealP = returnedMealP.toObject();
+                console.log(returnedMealP);
+                resolve(returnedMealP);
+            }
+            else{
+                reject("No meal package found");
+            } 
+        }).catch((err)=>{
+            console.log("Error Retriving meal package: " + err);
+            reject(err);
+        });
+    });
+}
+
+module.exports.editMealPackage = (editData)=>{
+    // var errMsg;
+    return new Promise((resolve, reject)=>{
+        editData.topPackage = (editData.topPackage) ? true : false;
+        
+        MealPackages.updateOne(
+        {mealPNumber : editData.mealPNumber},
+        {$set: {  //fields we updates
+            name: editData.name,
+            price: editData.price,
+            description: editData.description,
+            category: editData.category,
+            noOfMeals: editData.noOfMeals,
+            topPackage: editData.topPackage,
+            image: editData.image
+        }}, //find entry using name field
+        { runValidators: true }, function(err){
+            // errMsg = err;
+            // console.log("fail to save the meal package!" + err);
+            if (err && err.name === 'ValidationError'){
+                for (field in err.errors){
+                    errData.mealPError[field] = "This field is required.";
+                }
+            }
+        },//validate inputs
+        )
+        .exec() //calls the updateOne as a promise
+        .then(()=>{
+            console.log(`Meal package ${editData.name} has been updated`);
+            resolve();
+        }).catch((err)=>{
+            console.log(err.name);
+            reject(err.name);
         });
     });
 }

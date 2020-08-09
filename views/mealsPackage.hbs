@@ -1,7 +1,15 @@
 {{!-- Hero section for meals packages --}}
 {{> hero data.hero.[1]}}
 {{!-- banner --}}
-    <h2 class="mealPackage-banner-text"><span>Discover</span> the perfect meal prepared <span>for you</span> by a professional chef today.</h2>
+    <h2 class="mealPackage-banner-text {{#if admin}}mealPackage-banner-text-admin{{/if}}"><span>Discover</span> the perfect meal prepared <span>for you</span> by a professional chef today.</h2>
+{{#if admin}}
+<div>
+    <a href="addMealP">
+        <button type="button" class="btn btn-dark btn-lg banner-btn add-btn">Add new package</button>
+    </a>
+</div>
+{{/if}}
+
 {{!-- Meal packages item list --}}
 <section id="meal-packages-list">
     <div class="items-container">

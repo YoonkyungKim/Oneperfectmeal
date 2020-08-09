@@ -34,6 +34,16 @@ p {
     color: #FFFFFF;
 }
 
+/* admin */
+
+.add-btn {
+    margin-bottom: 5%;
+}
+
+.edit-btn {
+    margin-bottom: 9%;
+}
+
 /* For the headings in each section */
 
 .heading {
@@ -45,6 +55,10 @@ p {
 .mealPackage-banner-text {
     font-size: 1.5rem;
     padding: 5% 0;
+}
+
+.mealPackage-banner-text-admin {
+    padding: 3% 0 2% 0;
 }
 
 .mealPackage-banner-text span {
@@ -344,39 +358,35 @@ p {
     color: #3d1518; 
 }
 
-.signup-input-container {
+.input-container {
     text-align: left;   
 }
 
-.signup-input, .signup-input-label {
+.input, .input-label {
     display: inline-block;
     width: 100%;
     clear: both;
     text-align: left;
 }
 
-.signup-input {
+.input {
     padding: 2% 3%;
-    margin-bottom: 4%;
+    margin-bottom: 15px;
+    /* 4% */
     border: 1px solid #d3d3d3;
     border-radius: 4px; 
 }
 
-.signup-checkbox {
-    width: 5%;
-    float: right;
-    margin-top: 4%;
+.checkbox-input {
     vertical-align: middle;
+    text-align: left;
 }
 
-.signup-checkbox-label {
-    margin: 2% 0 6% 0;
-    width: 92%;
-    font-size: 0.9rem;
-    color: #393939;
+.checkbox-label {
+    margin-bottom: 0;
 }
 
-.signup-input::placeholder {
+.input::placeholder {
     color: #d3d3d3;
     font-weight: 400;
     font-size: 0.9rem;
@@ -414,14 +424,14 @@ p {
 .inputErrorMessage {
     display: inline-block;
     text-align: left;
-    padding: 1% 0 5% 0;
+    padding: 1% 0 4% 0;
     font-weight: 500;
     font-size: 0.8rem;
     color: #E5226D;
 }
 
-.invalid-user-message-box {
-    background-color: #fabed5;
+.err-message-box {
+    background-color: #fcd1e2;
     border-radius: 0.2em;
     /* border: 1px solid #E5226D; */
     padding: 3%;
@@ -535,6 +545,21 @@ p {
     padding-left: 0;
 }
 
+/* add meal package */
+
+.addmeal-err-message {
+    margin-top: 10px;
+}
+
+.container-margin {
+    margin-top: 1%;
+    margin-bottom: 3%;
+}
+
+.file-input {
+    vertical-align: middle;
+}
+
 /* //1028 */
 @media (max-width: 996px){
 
@@ -610,10 +635,14 @@ p {
     .form-heading {
         width: 50%;
         font-size: 1.2rem;
-        /* margin: -53px auto 10% auto; */
         margin-top: -53px;
         margin-bottom: 10%;
         color: #3d1518; 
+    }
+
+    .mealP-form-heading {
+        margin-top: -56px; 
+        width: 30%;
     }
 
     .login-password-label{
@@ -630,15 +659,13 @@ p {
         padding: 3.7% 0;
     }
 
-    .signup-input-container {
+    .input-container {
         margin-top: 3%;
     }
 
 }
 
 @media (max-width: 768px){
-
-
     h3 {
         font-size: 2rem;
         line-height: 1.5;
@@ -672,6 +699,12 @@ p {
         text-align: center;
     }
 
+    /* add meal package */
+
+    .addmeal-input {
+        margin-bottom: 5px;
+    }
+
     /* hero */
 
     .hero-container {
@@ -700,6 +733,7 @@ p {
     }
 
     /* top meal section */
+
     .top-meal-h3 {
         font-size: 2rem;
         line-height: 1.6;
@@ -732,6 +766,10 @@ p {
         margin: 0;
     }
 
+    .mealPackage-banner-text-admin {
+        padding: 9% 10%;
+    }
+
     .item-box {
         width: 60%;
     }
@@ -740,16 +778,20 @@ p {
         margin-bottom: 10%;
     }
 
+    .item-price-admin {
+        margin-bottom: 3%;
+    }
+
      /* form */
 
     .form-container{
         padding: 5% 5% 3% 5%;
-        margin: 10% auto;
+        margin: 10% 5%;
     }
 
     .form-heading {
-        margin: -15% auto 10% auto;
-        width: 40%;
+        margin: -7.5% auto 10% auto;
+        width: 30%;
         font-size: 1rem;
         color: #3d1518; 
     }
@@ -761,11 +803,7 @@ p {
         font-size: 0.6rem;
     }
 
-    .signup-input-container {
-        text-align: center;   
-    }
-
-    .signup-input-container label {
+    .input-container label {
         font-size: 0.9rem;   
     }
 
@@ -847,14 +885,14 @@ p {
 
     .form-container{
         padding: 5% 5% 3% 5%;
-        margin: 10% auto;
+        margin: 10% 5%;
         clear: both;
         border: 1px solid #d3d3d3;
     }
 
     .form-heading {
-        margin: -10% auto 10% auto;
-        width: 50%;
+        margin: -8% auto 10% auto;
+        width: 40%;
         font-size: 1rem;
         color: #3d1518; 
     } 
@@ -866,6 +904,10 @@ p {
         padding: 9% 7%;
     }
 
+    .mealPackage-banner-text-admin {
+        padding: 5% 7% 3% 7%;
+    }
+
     .item-box {
         width: 63%;
     }
@@ -874,6 +916,20 @@ p {
         margin-bottom: 10%;
     }
 
+    .item-price-admin {
+        margin-bottom: 1%;
+    }
+
+    /* admin */
+    
+    .add-btn {
+        margin-bottom: 7%;
+    }
+
+    .edit-btn {
+        margin-bottom: 11%;
+    }
+    
     /* dashboard */
 
     .dashboard-info-container {

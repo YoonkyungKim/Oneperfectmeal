@@ -3,8 +3,10 @@
 // Heroku link: https://sheltered-beyond-52937.herokuapp.com/
 // Github link: https://github.com/YoonkyungKim/WEB322-Oneperfectmeal
 
-// Following the professor's recommendation, I made the app to redirect the user to the login page showing the welcome message instead of dashboard page, once the account is created.
-// You can choose the user type when you sign up. If you choose to sign up as a manager, you are signed up as a data entry clerk.
+// data clerk account:
+// email: data@c.com
+// password: admin1
+
 // To reduce complexity, I separated the module that contains object type data (meal package etc.) and the module dealing with database and user input validation into two files.
 // (data.js & db.js)
 
@@ -16,7 +18,7 @@ const nodemailer = require('nodemailer');
 const ds = require("./data");
 const db = require("./db");
 const path = require("path");
-
+const multer = require("multer");
 const clientSessions = require("client-sessions");
 
 // Handlebars setup
@@ -65,35 +67,71 @@ app.use(clientSessions({
     activeDuration: 1000 * 60  // the session will be extended by this many ms each req (1 min)
 }));
 
+const storage = multer.diskStorage({
+    destination: "./public/img/",
+    filename: function(req, file, cb){
+        // write the filename as current date: simple example
+        // for large web service: better to use GUID's for filenames.
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const imageFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image')){
+        return cb(null, true);
+    } else {
+        return cb(new Error('Not an image! Please upload an image.', 400), false);
+    }
+};
+
+// use diskStorage function for naming instead of default
+const upload = multer({ storage: storage, fileFilter: imageFilter});
+
 app.get("/", (req, res) => {
     ds.getLocalData().then((inData)=>{
-        if (req.session.user){
-            res.render("index", { 
-                data: inData, 
-                topMealSection: true,
-                loggedIn: true
-            });
-        } else {
-            res.render("index", { 
-                data: inData, 
-                topMealSection: true
-            });
-        }
+        db.getMealPackages().then((mealPs)=>{
+            if (req.session.user){
+                res.render("index", { 
+                    data: inData, 
+                    topMealSection: true,
+                    mealPackages: (mealPs.length !== 0) ? mealPs: undefined,
+                    loggedIn: true  // for the proper nav menus
+                });
+            } else {
+                res.render("index", { 
+                    data: inData, 
+                    topMealSection: true,
+                    mealPackages: (mealPs.length !== 0) ? mealPs: undefined
+                });
+            }
+        }).catch((err)=>{
+            console.log(err);
+            res.render("/"); // add error message
+        })
     })
 });
 
 app.get("/meals-package", (req, res) => {
     ds.getLocalData().then((inData)=>{
-        if (req.session.user){
-            res.render("mealsPackage", { 
-                data: inData,
-                loggedIn: true
-            });
-        } else {
-            res.render("mealsPackage", { 
-                data: inData
-            });
-        }
+        db.getMealPackages().then((mealPs)=>{
+            //to change nav bar menus
+            if (req.session.user){
+                res.render("mealsPackage", { 
+                    data: inData,
+                    mealPackages: (mealPs.length !== 0) ? mealPs: undefined,
+                    loggedIn: true,
+                    admin: (req.session.user.admin) ? true : false
+                });
+            } else {
+                res.render("mealsPackage", { 
+                    data: inData,
+                    mealPackages: (mealPs.length !== 0) ? mealPs: undefined
+                });
+            }
+        }).catch((err)=>{
+            console.log(err);
+            res.render("mealsPackage");
+        })
     })
 });
 
@@ -114,7 +152,6 @@ app.get("/login", (req, res) => {
          });
     })
 });
-
 
 // dashboard: private route
 app.get("/dashboard", (req, res) => {
@@ -190,7 +227,7 @@ app.post("/login", (req, res) => {
                     error: true,
                     errData: errorData,
                     formData: inputData,
-                    page: "login",
+                    page: "login"
                 });
             })
         })
@@ -263,6 +300,189 @@ app.post("/register", (req, res) => {
             })
         })
     })
+});
+
+// private page to data clerk
+app.get("/addMealP", (req, res)=>{
+    if (req.session.user){
+        if (req.session.user.admin){
+            res.render("addMealPackage", {loggedIn: true});
+        } else {
+            res.redirect("/dashboard");
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
+
+// I want to handle the file uploading error and display it to the user, 
+// so call upload.single() function inside the route
+app.post("/addMealP", (req, res)=>{
+    if (req.session.user && req.session.user.admin){
+        var errorMsg;
+        let fileUpload = upload.single("photo");
+        fileUpload(req, res, function (err){
+            console.log(err);
+            if (!req.file){
+                console.log("no file");
+                if (err){
+                    errorMsg = err;
+                } else {
+                    errorMsg = "Please choose the image.";
+                }
+                // to not clear the form if the user doesn't attach any image / user doesn't fill out required field
+                var inputData = {
+                    mealPNumber: req.body.mealPNumber,
+                    name: req.body.name,
+                    price: req.body.price,
+                    description: req.body.description,
+                    noOfMeals: req.body.noOfMeals,
+                    topPackage: (req.body.topPackage) ? true : false
+                }
+
+                res.render("addMealPackage", {
+                    error: "NoFile",
+                    errMsg: errorMsg,
+                    page: "add",
+                    data: inputData,
+                    loggedIn: true
+                });
+            } else if (err instanceof multer.MulterError){
+                errorMsg = err;
+                res.render("addMealPackage", {error: errorMsg, loggedIn: true});
+            } else if (err){
+                errorMsg = err;
+                res.render("addMealPackage", {error: errorMsg, loggedIn: true});
+            } else {
+                // if user successfully choose the image
+                req.body.image = req.file.filename;
+                console.log(req.body);
+                db.addMealPackage(req.body).then(()=>{
+                    res.redirect("/meals-package");
+                }).catch((err)=>{
+                    var inputData = {
+                        mealPNumber: req.body.mealPNumber,
+                        name: req.body.name,
+                        price: req.body.price,
+                        description: req.body.description,
+                        noOfMeals: req.body.noOfMeals,
+                        topPackage: (req.body.topPackage) ? true : false
+                    }
+                    if (err === "ValidationError"){
+                        console.log("required field empty");
+                        console.log(inputData.name);
+                        db.getErrData().then((errorData)=>{
+                            res.render("addMealPackage", {
+                                error: "NoRequiredField",
+                                errMsg: errorData,
+                                page: "add",
+                                data: inputData,
+                                loggedIn: true
+                            });
+                        })
+                    } else {
+                        console.log("Error adding meal package: "+ err);
+                        res.render("addMealPackage", {
+                            error: "error",
+                            errMsg: err,
+                            page: "add",
+                            data: inputData,
+                            loggedIn: true
+                        });
+                    }               
+                }); 
+            }
+        })
+    }else {
+        res.redirect("/login");
+    }
+});
+
+// Edit meal package
+// editMealP?mealPNumber=mealPNumber
+// private page to data clerk
+app.get("/editMealP", (req,res)=>{
+    if (req.session.user && req.session.user.admin){
+        console.log(req.query);
+        if (req.query.mealPNumber){ 
+            console.log("number exists in query");
+            db.getMealByNumber(req.query.mealPNumber).then((mealP)=>{
+                res.render("editMealPackage", {
+                    data: mealP,
+                    page: "edit",
+                    loggedIn: true
+                });
+            }).catch(()=>{
+                console.log("couldn't find the meal package with this number");
+                res.redirect("/meals-package");
+            });
+        }
+        else {
+            res.redirect("/meals-package");
+        }  
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.post("/editMealP", (req,res)=>{
+    if (req.session.user && req.session.user.admin){
+        let fileUpload = upload.single("photo");
+        fileUpload(req, res, function (err){
+            // if user doesn't upload the new file (doesn't want to change the original image), that's okay.
+            if (!req.file){
+                console.log("no file change");
+                // Cannot edit meal package number once created. Thus, we can find the original image through it             
+                db.getMealByNumber(req.body.mealPNumber).then((mealP)=>{
+                    req.body.image = mealP.image;
+                    db.editMealPackage(req.body).then(()=>{
+                        res.redirect("/meals-package");
+                    }).catch((err)=>{
+                        console.log(err);
+                        if (err === "ValidationError"){
+                            db.getErrData().then((errorData)=>{
+                                res.render("editMealPackage", {
+                                    data: mealP,
+                                    error: "NoRequiredField",
+                                    errMsg: errorData,
+                                    page: "edit",
+                                    loggedIn: true
+                                });
+                            })
+                        } else {
+                            console.log("Error adding meal package: "+ err);
+                            res.render("editMealPackage", {
+                                data: mealP,
+                                error: "error",
+                                errMsg: err,
+                                page: "edit",
+                                loggedIn: true
+                            });
+                        }  
+                    })
+                }).catch((err)=>{
+                    console.log(err);
+                });
+            } else if (err instanceof multer.MulterError){
+                errorMsg = err;
+                res.render("editMealPackage", {error: errorMsg, loggedIn: true});
+            } else if (err){
+                errorMsg = err;
+                res.render("editMealPackage", {error: errorMsg, loggedIn: true});
+            } else {
+                // when the user upload a new image (want to change image)
+                req.body.image = req.file.filename;
+                db.editMealPackage(req.body).then(()=>{
+                    res.redirect("/meals-package");
+                }).catch((err)=>{
+                    console.log(err);
+                    res.redirect("/editMealPackage");
+                })
+            }
+        })
+    } else {
+        redirect("/login");
+    }
 });
 
 // if db connection is successful, listen the port
