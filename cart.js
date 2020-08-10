@@ -94,7 +94,7 @@ module.exports.everyItemCount = (inCart)=>{
     });
 }
 
-//returns the cart array with all items (there are duplicates)
+// empty cart
 module.exports.emptyCart = ()=>{
     return new Promise((resolve, reject)=>{
         cart = [];
