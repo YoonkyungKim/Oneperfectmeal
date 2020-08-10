@@ -180,7 +180,10 @@ app.get("/dashboard", (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session.reset();
-    res.redirect("/login");
+    // empty cart when user logged out
+    cart.emptyCart().then(()=>{
+        res.redirect("/login");
+    })
 });
 
 app.post("/login", (req, res) => {

@@ -70,7 +70,7 @@
                     $(".total-price").text(json.data.total);
                     $("#list").empty();//emptys old container
                     var htmlStr =""; //creates a empty html string to add to list div
-                    htmlStr += '<p class="cart-orderComplete-message"><i class="fas fa-check"></i> Your order is completed!</p>';
+                    htmlStr += '<p class="cart-orderComplete-message"><i class="fas fa-check"></i> Your order is complete!</p>';
                     //sets the HTML inside #list div
                     $("#list").html(htmlStr); 
                 }).catch((message)=>{
