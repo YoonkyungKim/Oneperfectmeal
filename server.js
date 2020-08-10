@@ -9,6 +9,7 @@
 
 // To reduce complexity, I separated the module that contains object type data and the module dealing with database and input validation into two files.
 // (data.js & db.js)
+// shopping cart data is in cart.js
 
 const express = require("express");
 const exphbs = require("express-handlebars");
@@ -180,7 +181,7 @@ app.get("/dashboard", (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session.reset();
-    // empty cart when user logged out
+    // empty cart when user log out
     cart.emptyCart().then(()=>{
         res.redirect("/login");
     })
@@ -549,7 +550,7 @@ app.post("/addToCart", (req, res) => {
     } 
 });
 
-// AJAX route to load the item count value when document is ready
+// AJAX route to load the item count value when the page is loaded (to apply cart data change)
 app.post("/loadItemCount", (req, res) => {
         cart.getCart()
         .then((cart)=>{
@@ -557,6 +558,27 @@ app.post("/loadItemCount", (req, res) => {
         }).catch(()=>{
             res.json({message: "error getting cart"});
         })
+});
+
+// AJAX route to load cart when the page is loaded (to apply cart data change)
+app.post("/loadCart", (req, res) => {
+    var cartData = {
+        cart:[],
+        total:0
+    };
+    cart.getCart().then((items)=>{
+        cartData.cart = items;
+        cart.checkout().then((total)=>{
+            cartData.total = total;
+            cart.everyItemCount(cartData.cart).then(()=>{
+                cart.getUniqueCart()
+                .then((items)=>{
+                    cartData.cart = items;
+                    res.json({data: cartData});
+                })
+            })
+        })            
+    })
 });
 
 // route to the cart page
@@ -595,7 +617,7 @@ app.post("/removeItem", (req,res)=>{
     var cartData = {
         cart:[],
         total:0
-    } ;
+    };
     cart.removeItem(req.body.mealPNumber).then(cart.checkout)
     .then((inTotal)=>{
         cartData.total = inTotal;
