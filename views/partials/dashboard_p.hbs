@@ -2,8 +2,11 @@
 {{> hero data.hero.[4]}}
 
 <div class="dashboard-wrapper">
-
-    <div class="dashboard-sidebar">  
+    <div class="dashboard-sidebar"> 
+        <div class="dashboard-sidebar-li">
+            <i class="fas fa-shopping-cart"></i>
+            <a class="dashboard-sidebar-a" href="cart">Shopping Cart</a>
+        </div> 
         <div class="dashboard-sidebar-li">
             <i class="fas fa-utensils"></i>
             <a class="dashboard-sidebar-a" href="addMealP">{{#if user.admin}}Add packages{{else}}Your Order{{/if}}</a>
@@ -15,10 +18,6 @@
         <div class="dashboard-sidebar-li">
             <i class="fas fa-percentage"></i>
             <a class="dashboard-sidebar-a" href="#">{{#if user.admin}}Statistics{{else}}Promo codes{{/if}}</a>
-        </div>
-        <div class="dashboard-sidebar-li">
-            <i class="fas fa-cog"></i>
-            <a class="dashboard-sidebar-a" href="#">Account settings</a>
         </div>
     </div>
 
