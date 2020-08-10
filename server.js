@@ -704,17 +704,19 @@ app.post("/placeOrder", (req, res) => {
                     // console.log(items);
                     cartData.cart = items; 
                     var htmlContent = '';
-                    htmlContent += `<h3>Thank you for your order, ${req.session.user.fName}.</h3>`;
+                    htmlContent += `<h3>Hello, ${req.session.user.fName}. Thank you for shopping at Oneperfectmeal.</h3>`;
                     htmlContent += "Below is your order list.";
                     htmlContent += '<div"><ul>';
                     var imgs = [];
                     for (var i=0; i<cartData.cart.length; i++){
                         imgs.push(cartData.cart[i].image);
-                        htmlContent += `<li style="list-style: none; text-align: left;"><h4">${cartData.cart[i].name}</h4><p>qty: ${cartData.cart[i].itemCount}</p>`;
+                        var itemTotal = cartData.cart[i].price * cartData.cart[i].itemCount;
+                        htmlContent += `<li style="list-style: none; text-align: left;"><h4 style="line-height: 1;">${cartData.cart[i].name}</h4><p style="line-height: 1;">price: $${cartData.cart[i].price}</p><p style="line-height: 1;">qty: ${cartData.cart[i].itemCount}</p>`;
+                        htmlContent += `<p style="line-height: 1;">total: $${itemTotal} </p>`
                         htmlContent += `<img style="width:100px;" src="cid:img${i}" alt="${cartData.cart[i].name}"></li>`;
                     }
-                    htmlContent += '</ul></div>';
-                    htmlContent += `<p>Your order total is ${cartData.total}.</p>`
+                    htmlContent += '</ul></div><h4>Order summary: </h4>';
+                    htmlContent += `<p>Your order total is <strong>$${cartData.total}</strong>.</p>`
                     // console.log(htmlContent);
                     var tempAttachments = [];
                     for (var i=0; i < imgs.length; i++) {
@@ -728,7 +730,7 @@ app.post("/placeOrder", (req, res) => {
                     var mailOptions = {
                         from: process.env.NODEMAILER_USER,
                         to: req.session.user.email,
-                        subject: 'Welcome to Oneperfectmeal!',
+                        subject: 'Thanks for your order!',
                         html: htmlContent,
                         attachments: tempAttachments
                     };    

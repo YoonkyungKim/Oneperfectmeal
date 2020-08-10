@@ -54,7 +54,6 @@ module.exports.getUniqueCart = ()=>{
                 uniqueCart.push(x);
             }
         })
-        console.log("unique: " + uniqueCart);
         resolve(uniqueCart);
     });
 }
@@ -90,7 +89,7 @@ module.exports.everyItemCount = (inCart)=>{
                 })
             });
         }
-        console.log("current item count: " + count);
+        // console.log("current item count: " + count);
         resolve();
     });
 }
