@@ -7,9 +7,9 @@
 // email: data@c.com
 // password: admin1
 
-// To reduce complexity, I separated the module that contains object type data and the module dealing with database and input validation into two files.
-// (data.js & db.js)
-// shopping cart data is in cart.js
+// db.js: dealing with database and user input validation
+// cart.js: shopping cart data
+// data.js: other local data (e.g. for hero/content section)
 
 const express = require("express");
 const exphbs = require("express-handlebars");
