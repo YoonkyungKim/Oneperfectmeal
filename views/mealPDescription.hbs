@@ -30,13 +30,12 @@
                     headers: { 'Content-Type': 'application/json'} 
                 })
                 .then(response => response.json())
-                .then(json => {//responds with number of items in cart 
-                    //changes the item number of the cart in the span tag
+                .then(json => {
                     //console.log(json);
                     // if user is not logged in, redirect to login page
                     if (json.noLoggedin){
                         window.location.href = '/login';
-                    } else {
+                    } else { //else, add the number of items in cart into span element
                         $("span.cart-icon").text(`${json.data}`);
                     }
                 }).catch((err)=>{
