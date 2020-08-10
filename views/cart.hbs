@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oneperfectmeal</title>
+    <link rel="icon" href="./img/logo-3.png">
+    {{!-- Google Fonts --}}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Ubuntu&family=Noto+Sans:ital@1&family=Lato:wght@900&family=Rubik:wght@500&family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {{!-- Font Awesome --}}
+    <script src="https://kit.fontawesome.com/629442e482.js" crossorigin="anonymous"></script>
+
+    {{!-- CSS & bootstrap stylesheets --}}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+
+    {{!-- Bootstrap Scripts --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script>
+        function makeAJAXRequest(method, url, data){
+            if(data){ // Make an AJAX call using the provided data & method
+                fetch(url, { 
+                    method: method,
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json'} 
+                })
+                .then(response => response.json())
+                .then(json => {
+                    $(".total-text").text("Total: ");
+                    $(".total-price").text(json.data.total);
+                    $("#list").empty(); //empty old container
+                    var htmlStr =""; //creates a empty html string to add to list div
+                    
+                    //Populates HTML string. This prints each item to screen. 
+                    if (json.data.cart){
+                        (json.data.cart).forEach(x=>{ 
+                            htmlStr += '<div class="row cart-info-box">';
+                            htmlStr += '<div class="col-lg-2 col-md-2 col-sm-3 col-3 cart-img-box">';
+                            htmlStr += '<img class="cart-img" src="/img/'+x.image+'" alt="'+x.name+'">';
+                            htmlStr += '</div><div class="col-lg-4 col-md-4 col-sm-9 col-4 cart-name-box">';
+                            htmlStr += '<p class="cart-name">'+x.name+'</p><p class="cart-available"><i class="fas fa-check"></i> Available</p></div>';
+                            htmlStr += '<div class="col-lg-4 col-md-4 col-sm-9 col-5">';
+                            htmlStr += '<div class="cart-itemQty-box"><p class="cart-itemQty-p">Quantity</p>'
+                            htmlStr += `<input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQty("${x.mealPNumber}")'>`
+                            htmlStr += `<input class="cart-itemQtyNum" type="text" value="${x.itemCount}" size="2">`
+                            htmlStr += `<input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQty("${x.mealPNumber}")'>`
+                            htmlStr += '</div></div><div class="col-lg-2 col-md-2 col-sm-3 col-12 remove-button-parent">';
+                            htmlStr += '<p class="cart-price">$'+x.price+'</p>';
+                            htmlStr += '</div></div><div class="row remove-button-box">';   
+                            htmlStr += `<button class="remove-button" type="button" onclick='removeFromCart("${x.mealPNumber}")'>X Remove</button>`;
+                            htmlStr += '</div>'
+                        });
+                    }
+
+                    //sets the HTML inside "list" div
+                    $("#list").html(htmlStr);
+                }).catch((err)=>{
+                    console.log("Error Fetching");
+                    alert(err.message);
+                }); 
+            } else{  // Make an AJAX call without providing data using the method
+                fetch(url, { method: method })
+                .then(response => response.json())
+                .then(json => {
+                    //console.log(json);   
+                    
+                    $(".total-text").text("Total: ");
+                    $(".total-price").text(json.data.total);
+                    $("#list").empty();//emptys old container
+                    var htmlStr =""; //creates a empty html string to add to list div
+                    htmlStr += '<p class="cart-orderComplete-message"><i class="fas fa-check"></i> Your order is completed!</p>';
+                    //sets the HTML inside #list div
+                    $("#list").html(htmlStr); 
+                }).catch((message)=>{
+                    alert(message);
+                });
+            }
+        }
+        //makes ajax call to remove a certain item by meal package name
+        function removeFromCart(data){
+            console.log("Calling remove with: " + data);
+            makeAJAXRequest("POST", "/removeItem", {mealPNumber: data});
+        }
+
+        //makes ajax call to place an order and clean the cart
+        function placeOrder(){
+            console.log("Calling place an order");
+            makeAJAXRequest("POST", "/placeOrder");
+        }
+
+        // increase item quantity
+        function increaseQty(data){
+            console.log("Calling increase qty");
+            makeAJAXRequest("POST", "/increaseItem", {mealPNumber: data});
+        }
+
+        // decrease item quantity
+        function decreaseQty(data){
+            console.log("Calling decrease qty");
+            makeAJAXRequest("POST", "/decreaseItem", {mealPNumber: data});
+        }
+    </script> 
+       
+    </head>
+    <body>
+        {{> header}}
+        <main>
+            <div class="row">
+                <div id="list" class="cart-left col-lg-8 col-md-8 col-sm-6 col-12">
+                {{#each data.cart}}
+                    <div class="row cart-info-box">
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-3 cart-img-box">
+                            <img class="cart-img" src="./img/{{image}}" alt="{{name}}">
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-9 col-4 cart-name-box">
+                            <p class="cart-name">{{name}}</p>
+                            <p class="cart-available"><i class="fas fa-check"></i> Available</p>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-9 col-5 cart-itemQty-box-lg">
+                            <div class="cart-itemQty-box">
+                                <p class="cart-itemQty-p">Quantity</p>
+                                <input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQty("{{mealPNumber}}")'>
+                                <input class="cart-itemQtyNum" type="text" value="{{itemCount}}" size="2">
+                                <input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQty("{{mealPNumber}}")'>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-3 col-12 remove-button-parent">
+                            <p class="cart-price">${{price}}</p>
+                        </div>
+                    </div>
+                    <div class="row remove-button-box">
+                        <button class="remove-button" type="button" onclick='removeFromCart("{{mealPNumber}}")'>X Remove</button>
+                    </div>
+                    
+                {{else}}
+                    <div class="row">
+                        <div class="col-12"><p class="cart-empty-message">Cart is Empty</p></div>
+                        
+                    </div>
+                {{/each}}
+                
+                </div>
+                
+                <div class="cart-right col-lg-4 col-md-4 col-sm-6 col-12">
+                    <div class="row total-box">
+                        <div class="col-6 total-text">Total: </div>
+                        <div class="col-6 total-price">${{data.total}}</div>
+                    </div>
+                    <div class="row placeOrder-box">
+                        <button class="placeOrder-btn" type="button" onclick='placeOrder()'>PLACE YOUR ORDER</button>
+                    </div>
+                </div>                
+            </div>
+        {{> footer}}
+        </main>
+    </body>
+</html>

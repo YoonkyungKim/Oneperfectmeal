@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oneperfectmeal</title>
+    <link rel="icon" href="./img/logo-3.png">
+    {{!-- Google Fonts --}}
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Ubuntu&family=Noto+Sans:ital@1&family=Lato:wght@900&family=Rubik:wght@500&family=Noto+Sans+JP:wght@300;400;500;600;700;900&family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {{!-- Font Awesome --}}
+    <script src="https://kit.fontawesome.com/629442e482.js" crossorigin="anonymous"></script>
+
+    {{!-- CSS & bootstrap stylesheets --}}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+
+    {{!-- Bootstrap Scripts --}}
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script>
+        function makeAJAXRequest(method, url, data){
+            if (data){ // Make an AJAX call using the provided data & method
+                                    
+                console.log("Adding: "+ data.mealPNumber);
+                fetch(url, { 
+                    method: method,
+                    body: JSON.stringify(data),
+                    headers: { 'Content-Type': 'application/json'} 
+                })
+                .then(response => response.json())
+                .then(json => {//responds with number of items in cart 
+                    //changes the item number of the cart in the span tag
+                    //console.log(json);
+                    // if user is not logged in, redirect to login page
+                    if (json.noLoggedin){
+                        window.location.href = '/login';
+                    } else {
+                        $("span.cart-icon").text(`${json.data}`);
+                    }
+                }).catch((err)=>{
+                    console.log("Error Fetching");
+                    alert(err.message);
+                }); 
+                
+            } else {  // Make an AJAX call without providing data using the method
+                fetch(url, { method: method })
+                .then(response => response.json())
+                .then(json => {
+                    //console.log(json);  
+                    $("span.cart-icon").text(`${json.data}`); 
+                }).catch((message)=>{
+                    alert(message);
+                });
+            }
+        }
+        //makes ajax call to add a certain item by meal package number to cart
+        function addToCart(data){
+            console.log("Calling add with: " + data);
+            makeAJAXRequest("POST", "/addToCart", {mealPNumber: data});
+        }
+
+        function loadItemCount(){
+            makeAJAXRequest("POST", "/loadItemCount");
+        }
+        // when document is ready, call the loadItemCount function to get the number of items in the cart
+        $(document).ready(function(){
+            loadItemCount();
+        })
+
+    </script>    
+
+    </head>
+    <body>
+        <main>
+        {{> header }}
+            <a class="cart-icon-a" href="/cart"><i class="fas fa-shopping-cart fa-2x cart-icon-i"></i><span class="cart-icon"></span></a> 
+            <div class="row mealPDesc-container">
+                <div class="col-lg-6 col-md-6 col-sm-12 mealPDesc-img-box">
+                    <img class="mealPDesc-img" src="./img/{{data.image}}" alt={{data.name}}>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="mealPDesc-right">
+                        <div class="mealPDesc-right-innerBox">
+                            <p class="mealPDesc-name">{{data.name}} Package</p>
+                            <p class="mealPDesc-price">${{data.price}}</p>
+                            <p class="mealPDesc-noOfMeals"><span class="mealPDesc-noOfMeals-span">{{data.noOfMeals}} Meals</span></p>
+                            <p class="mealPDesc-description">{{data.description}} Meals are included in this package.</p>
+
+                            <button class="btn btn-dark banner-btn addToCart-btn" onclick='addToCart("{{data.mealPNumber}}")'>
+                                ADD TO ORDER
+                            </button>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        {{> footer}}
+        </main>
+    </body>
+</html>

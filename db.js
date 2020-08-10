@@ -203,7 +203,7 @@ module.exports.addUser = function(data){
         .then(hash => { // hash: encrypted password returned
             // store the hashed password to DB
             newUser.password = hash;
-            console.log(newUser);
+            // console.log(newUser);
             // try to save entry to our database
             newUser.save((err)=>{
                 if (err){
@@ -362,7 +362,7 @@ module.exports.getMealByName = function(inName){
         .then((returnedMealP)=>{
             if(returnedMealP){
                 returnedMealP = returnedMealP.toObject();
-                console.log(returnedMealP);
+                // console.log(returnedMealP);
                 resolve(returnedMealP);
             }
             else{
@@ -382,7 +382,7 @@ module.exports.getMealByNumber = function(inNumber){
         .then((returnedMealP)=>{
             if(returnedMealP){
                 returnedMealP = returnedMealP.toObject();
-                console.log(returnedMealP);
+                // console.log(returnedMealP);
                 resolve(returnedMealP);
             }
             else{

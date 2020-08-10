@@ -3,13 +3,15 @@
         {{#if topPackage}}
             <div class="col-lg-3 col-md-6 col-sm-12">
                 <div class="item-box">
-                    <div class="item-img-box">
-                        <img class="item-img" src="./img/{{image}}" alt={{name}}>
-                    </div>
-                    <div class="item-text-box">
-                        <p class="item-name">{{name}}</p>
-                        <p class="item-price">{{price}}</p>
-                    </div>
+                    <a class="item-a" href="/mealPDesc?mealPNumber={{mealPNumber}}">
+                        <div class="item-img-box">
+                            <img class="item-img" src="./img/{{image}}" alt={{name}}>
+                        </div>
+                        <div class="item-text-box">
+                            <p class="item-name">{{name}}</p>
+                            <p class="item-price">{{price}}</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         {{/if}}
@@ -20,13 +22,15 @@
     {{#each mealPackages}}
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="item-box">
-                <div class="item-img-box">
-                    <img class="item-img" src="./img/{{image}}" alt={{name}}>
-                </div>
-                <div class="item-text-box">
-                    <p class="item-name">{{name}}</p>
-                    <p class="item-price item-price-admin">{{price}}</p>
-                </div>
+                <a class="item-a" href="/mealPDesc?mealPNumber={{mealPNumber}}">
+                    <div class="item-img-box">
+                        <img class="item-img" src="./img/{{image}}" alt={{name}}>
+                    </div>
+                    <div class="item-text-box">
+                        <p class="item-name">{{name}}</p>
+                        <p class="item-price item-price-admin">{{price}}</p>
+                    </div>
+                </a>
                 <a class="edit-btn-a" href="/editMealP?mealPNumber={{mealPNumber}}">
                     <button class="btn btn-dark banner-btn edit-btn">
                         Edit package
@@ -39,13 +43,16 @@
     {{#each mealPackages}}
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="item-box">
-                <div class="item-img-box">
-                    <img class="item-img" src="./img/{{image}}" alt={{name}}>
-                </div>
-                <div class="item-text-box">
-                    <p class="item-name">{{name}}</p>
-                    <p class="item-price">{{price}}</p>
-                </div>
+                <a class="item-a" href="/mealPDesc?mealPNumber={{mealPNumber}}">
+                    <div class="item-img-box">
+                        <img class="item-img" src="./img/{{image}}" alt={{name}}>
+                    </div>
+                
+                    <div class="item-text-box">
+                        <p class="item-name">{{name}}</p>
+                        <p class="item-price">{{price}}</p>
+                    </div>
+                </a>
             </div>
         </div>
     {{/each}}

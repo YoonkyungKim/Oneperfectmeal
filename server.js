@@ -7,7 +7,7 @@
 // email: data@c.com
 // password: admin1
 
-// To reduce complexity, I separated the module that contains object type data (meal package etc.) and the module dealing with database and user input validation into two files.
+// To reduce complexity, I separated the module that contains object type data and the module dealing with database and input validation into two files.
 // (data.js & db.js)
 
 const express = require("express");
@@ -20,6 +20,7 @@ const db = require("./db");
 const path = require("path");
 const multer = require("multer");
 const clientSessions = require("client-sessions");
+const cart = require("./cart");
 
 // Handlebars setup
 // register handlebars as the rendering engine for views
@@ -51,6 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Set the middleware for urlencoded form data
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); 
 
 // Set the port
 const HTTP_PORT = process.env.PORT || 3000;
@@ -356,7 +358,7 @@ app.post("/addMealP", (req, res)=>{
             } else {
                 // if user successfully choose the image
                 req.body.image = req.file.filename;
-                console.log(req.body);
+                // console.log(req.body);
                 db.addMealPackage(req.body).then(()=>{
                     res.redirect("/meals-package");
                 }).catch((err)=>{
@@ -405,6 +407,7 @@ app.post("/addMealP", (req, res)=>{
 // editMealP?mealPNumber=mealPNumber
 // private page to data clerk
 app.get("/editMealP", (req,res)=>{
+    // console.log(req.session);
     if (req.session.user){
         if (req.session.user.admin){
             console.log(req.query);
@@ -491,6 +494,237 @@ app.post("/editMealP", (req,res)=>{
         redirect("/login");
     }
 });
+
+// route to meal description page
+app.get("/mealPDesc", (req, res) => {
+    if (req.query.mealPNumber){ 
+        console.log("number exists in query");
+        db.getMealByNumber(req.query.mealPNumber).then((mealP)=>{
+            res.render("mealPDescription", {
+                data: mealP,
+                page: "mealPDesc",
+                loggedIn: (req.session.user) ? true : false,
+                layout: false
+            });
+        }).catch(()=>{
+            console.log("couldn't find the meal package with this number");
+            res.redirect("/meals-package");
+        });
+    }
+    else {
+        res.redirect("/meals-package");
+    } 
+})
+
+app.get("/userSessionCheck", (req, res)=>{
+    if (req.session.user){
+        res.json({session: true});
+    } else {
+        res.json({session: false});
+    }
+})
+
+// AJAX route to add a meal package. replies back with number of items in cart
+app.post("/addToCart", (req, res) => {
+    // console.log(req.session);
+    if (req.session.user){
+        
+        // console.log(req.body.mealPNumber);
+        console.log("Adding package with number: " + req.body.mealPNumber);
+        db.getMealByNumber(req.body.mealPNumber)
+        .then((item)=>{
+            // item.itemCount++;
+            cart.addItem(item)
+            .then((noOfItems)=>{
+                res.json({data: noOfItems});
+            })
+        }).catch(()=>{
+            res.json({message: "No Items found"});
+        })
+    } else {
+        res.json({noLoggedin: "User is not logged in"});
+    } 
+});
+
+// AJAX route to load the item count value when document is ready
+app.post("/loadItemCount", (req, res) => {
+        cart.getCart()
+        .then((cart)=>{
+            res.json({data: cart.length});
+        }).catch(()=>{
+            res.json({message: "error getting cart"});
+        })
+});
+
+// route to the cart page
+app.get("/cart",(req,res)=>{
+    // only logged in user can add items to cart
+    if (req.session.user){
+        var cartData = {
+            cart:[],
+            total:0
+        };
+        
+        cart.getCart().then((items)=>{
+            // console.log(items);
+            cartData.cart = items;
+            cart.checkout().then((total)=>{
+                cartData.total = total;
+                cart.everyItemCount(cartData.cart).then(()=>{
+                    cart.getUniqueCart()
+                    .then((items)=>{
+                        cartData.cart = items; 
+                        res.render("cart", {
+                            data:cartData, 
+                            layout:false, 
+                            loggedIn: true});
+                    })
+                })
+            })            
+        })
+    } else {
+        res.redirect("/login");
+    }
+});
+
+//AJAX route to remove item by meal package number. reply back with total and the cart. 
+app.post("/removeItem", (req,res)=>{
+    var cartData = {
+        cart:[],
+        total:0
+    } ;
+    cart.removeItem(req.body.mealPNumber).then(cart.checkout)
+    .then((inTotal)=>{
+        cartData.total = inTotal;
+        cart.getCart().then((items)=>{
+            cartData.cart = items; 
+            cart.everyItemCount(cartData.cart).then(()=>{
+                cart.getUniqueCart()
+                .then((items)=>{
+                    cartData.cart = items; 
+                    res.json({data: cartData});
+                })
+            })
+        })
+    });
+});
+
+// AJAX route to decrease item by 1
+app.post("/decreaseItem", (req, res) => {
+    var cartData = {
+        cart:[],
+        total:0
+    } ;
+
+    cart.decreaseItem(req.body.mealPNumber).then(cart.checkout)
+    .then((inTotal)=>{
+        cartData.total = inTotal;
+        cart.getCart().then((items)=>{
+            cartData.cart = items; 
+            cart.everyItemCount(cartData.cart).then(()=>{
+                cart.getUniqueCart()
+                .then((items)=>{
+                    console.log(cartData.cart);
+                    cartData.cart = items; 
+                    res.json({data: cartData});
+                })
+            })
+        })
+    })    
+})
+
+// AJAX route to increase item by 1
+app.post("/increaseItem", (req, res) => {
+    var cartData = {
+        cart:[],
+        total:0
+    } ;
+    db.getMealByNumber(req.body.mealPNumber)
+    .then((item)=>{
+        cart.addItem(item).then(cart.checkout)
+        .then((inTotal)=>{
+            cartData.total = inTotal;
+            cart.getCart().then((items)=>{
+                cartData.cart = items; 
+                cart.everyItemCount(cartData.cart).then(()=>{
+                    cart.getUniqueCart()
+                    .then((items)=>{
+                        console.log(cartData.cart);
+                        cartData.cart = items; 
+                        res.json({data: cartData});
+                    })
+                })
+            })
+        })
+    }).catch(()=>{
+        res.json({message: "No Items found"});
+    })
+})
+
+// AJAX route to clean the cart
+app.post("/placeOrder", (req, res) => { 
+    var cartData = {
+        cart:[],
+        total:0
+    };
+    // email: all the packages purchased and the quantity amount for each meal package purchased as well as the customer’s order total.
+    cart.getCart().then((items)=>{
+        // console.log(items);
+        cartData.cart = items;
+        cart.checkout().then((total)=>{
+            cartData.total = total;
+            cart.everyItemCount(cartData.cart).then(()=>{
+                cart.getUniqueCart()
+                .then((items)=>{
+                    // console.log(items);
+                    cartData.cart = items; 
+                    var htmlContent = '';
+                    htmlContent += `<h3>Thank you for your order, ${req.session.user.fName}.</h3>`;
+                    htmlContent += "Below is your order list.";
+                    htmlContent += '<div"><ul>';
+                    var imgs = [];
+                    for (var i=0; i<cartData.cart.length; i++){
+                        imgs.push(cartData.cart[i].image);
+                        htmlContent += `<li style="list-style: none; text-align: left;"><h4">${cartData.cart[i].name}</h4><p>qty: ${cartData.cart[i].itemCount}</p>`;
+                        htmlContent += `<img style="width:100px;" src="cid:img${i}" alt="${cartData.cart[i].name}"></li>`;
+                    }
+                    htmlContent += '</ul></div>';
+                    htmlContent += `<p>Your order total is ${cartData.total}.</p>`
+                    // console.log(htmlContent);
+                    var tempAttachments = [];
+                    for (var i=0; i < imgs.length; i++) {
+                        tempAttachments.push({
+                            filename: imgs[i],
+                            path:  `./public/img/${imgs[i]}`,
+                            cid: `img${i}`
+                        });
+                    }
+                    
+                    var mailOptions = {
+                        from: process.env.NODEMAILER_USER,
+                        to: req.session.user.email,
+                        subject: 'Welcome to Oneperfectmeal!',
+                        html: htmlContent,
+                        attachments: tempAttachments
+                    };    
+                    transporter.sendMail(mailOptions, (err, info)=> {
+                        if (err){
+                            console.log(err);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    })
+                    // empty cart
+                    cart.emptyCart().then((emptycart)=>{
+                        cartData.cart = emptycart;
+                        cartData.total = 0;
+                        res.json({data: cartData});
+                    })
+                })
+            })
+        })            
+    })
+})
 
 // if db connection is successful, listen the port
 db.initialize().then(()=>{
