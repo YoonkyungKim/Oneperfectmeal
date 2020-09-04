@@ -528,17 +528,15 @@ app.get("/userSessionCheck", (req, res)=>{
     }
 })
 
-// AJAX route to add a meal package. replies back with number of items in cart
-app.post("/addToCart", (req, res) => {
-    // console.log(req.session);
+// AJAX route to add meal packages (several numbers) at once. replies back with number of items in cart
+app.post("/addMtpItemsToCart", (req, res) => {
     if (req.session.user){
         
         // console.log(req.body.mealPNumber);
         console.log("Adding package with number: " + req.body.mealPNumber);
         db.getMealByNumber(req.body.mealPNumber)
         .then((item)=>{
-            // item.itemCount++;
-            cart.addItem(item)
+            cart.addMtpItems(item, req.body.inNoOfItems)
             .then((noOfItems)=>{
                 res.json({data: noOfItems});
             })
@@ -550,14 +548,24 @@ app.post("/addToCart", (req, res) => {
     } 
 });
 
+app.post("/increaseQtyDesc", (req, res) => {
+    var noOfItems = req.body.noOfItems;
+    res.json({noOfItems: noOfItems});
+});
+
+app.post("/decreaseQtyDesc", (req, res) => {
+    var noOfItems = req.body.noOfItems;
+    res.json({noOfItems: noOfItems});
+});
+
 // AJAX route to load the item count value when the page is loaded (to apply cart data change)
 app.post("/loadItemCount", (req, res) => {
-        cart.getCart()
-        .then((cart)=>{
-            res.json({data: cart.length});
-        }).catch(()=>{
-            res.json({message: "error getting cart"});
-        })
+    cart.countItems()
+    .then((count)=>{
+        res.json({data: count, defaultQty: 1});
+    }).catch(()=>{
+        res.json({message: "error getting cart"});
+    })
 });
 
 // AJAX route to load cart when the page is loaded (to apply cart data change)
@@ -570,13 +578,7 @@ app.post("/loadCart", (req, res) => {
         cartData.cart = items;
         cart.checkout().then((total)=>{
             cartData.total = total;
-            cart.everyItemCount(cartData.cart).then(()=>{
-                cart.getUniqueCart()
-                .then((items)=>{
-                    cartData.cart = items;
-                    res.json({data: cartData});
-                })
-            })
+            res.json({data: cartData});
         })            
     })
 });
@@ -595,16 +597,11 @@ app.get("/cart",(req,res)=>{
             cartData.cart = items;
             cart.checkout().then((total)=>{
                 cartData.total = total;
-                cart.everyItemCount(cartData.cart).then(()=>{
-                    cart.getUniqueCart()
-                    .then((items)=>{
-                        cartData.cart = items; 
-                        res.render("cart", {
-                            data:cartData, 
-                            layout:false, 
-                            loggedIn: true});
-                    })
-                })
+                cartData.cart = items; 
+                res.render("cart", {
+                    data:cartData, 
+                    layout:false, 
+                    loggedIn: true});
             })            
         })
     } else {
@@ -618,18 +615,13 @@ app.post("/removeItem", (req,res)=>{
         cart:[],
         total:0
     };
+    // console.log(req.body.mealPNumber);
     cart.removeItem(req.body.mealPNumber).then(cart.checkout)
     .then((inTotal)=>{
         cartData.total = inTotal;
         cart.getCart().then((items)=>{
             cartData.cart = items; 
-            cart.everyItemCount(cartData.cart).then(()=>{
-                cart.getUniqueCart()
-                .then((items)=>{
-                    cartData.cart = items; 
-                    res.json({data: cartData});
-                })
-            })
+            res.json({data: cartData});
         })
     });
 });
@@ -639,23 +631,21 @@ app.post("/decreaseItem", (req, res) => {
     var cartData = {
         cart:[],
         total:0
-    } ;
-
-    cart.decreaseItem(req.body.mealPNumber).then(cart.checkout)
-    .then((inTotal)=>{
-        cartData.total = inTotal;
-        cart.getCart().then((items)=>{
-            cartData.cart = items; 
-            cart.everyItemCount(cartData.cart).then(()=>{
-                cart.getUniqueCart()
-                .then((items)=>{
-                    console.log(cartData.cart);
-                    cartData.cart = items; 
-                    res.json({data: cartData});
-                })
+    };
+    db.getMealByNumber(req.body.mealPNumber)
+    .then((item)=>{
+        cart.decreaseItem(item).then(cart.checkout)
+        .then((inTotal)=>{
+            cartData.total = inTotal;
+            cart.getCart().then((items)=>{
+                cartData.cart = items; 
+                console.log(cartData.cart);
+                res.json({data: cartData});
             })
-        })
-    })    
+        }) 
+    }).catch(()=>{
+        res.json({message: "No Items found"});
+    })   
 })
 
 // AJAX route to increase item by 1
@@ -666,19 +656,13 @@ app.post("/increaseItem", (req, res) => {
     } ;
     db.getMealByNumber(req.body.mealPNumber)
     .then((item)=>{
-        cart.addItem(item).then(cart.checkout)
+        cart.increaseItem(item).then(cart.checkout)
         .then((inTotal)=>{
             cartData.total = inTotal;
             cart.getCart().then((items)=>{
                 cartData.cart = items; 
-                cart.everyItemCount(cartData.cart).then(()=>{
-                    cart.getUniqueCart()
-                    .then((items)=>{
-                        console.log(cartData.cart);
-                        cartData.cart = items; 
-                        res.json({data: cartData});
-                    })
-                })
+                console.log(cartData.cart);
+                res.json({data: cartData});
             })
         })
     }).catch(()=>{
@@ -698,56 +682,49 @@ app.post("/placeOrder", (req, res) => {
         cartData.cart = items;
         cart.checkout().then((total)=>{
             cartData.total = total;
-            cart.everyItemCount(cartData.cart).then(()=>{
-                cart.getUniqueCart()
-                .then((items)=>{
-                    // console.log(items);
-                    cartData.cart = items; 
-                    var htmlContent = '';
-                    htmlContent += `<h3>Hello, ${req.session.user.fName}. Thank you for shopping at Oneperfectmeal.</h3>`;
-                    htmlContent += "Below is your order list.";
-                    htmlContent += '<div"><ul>';
-                    var imgs = [];
-                    for (var i=0; i<cartData.cart.length; i++){
-                        imgs.push(cartData.cart[i].image);
-                        var itemTotal = cartData.cart[i].price * cartData.cart[i].itemCount;
-                        htmlContent += `<li style="list-style: none; text-align: left;"><h4 style="line-height: 1;">${cartData.cart[i].name}</h4><p style="line-height: 1;">price: $${cartData.cart[i].price}</p><p style="line-height: 1;">qty: ${cartData.cart[i].itemCount}</p>`;
-                        htmlContent += `<p style="line-height: 1;">total: $${itemTotal} </p>`
-                        htmlContent += `<img style="width:100px;" src="cid:img${i}" alt="${cartData.cart[i].name}"></li>`;
-                    }
-                    htmlContent += '</ul></div><h4>Order summary: </h4>';
-                    htmlContent += `<p>Your order total is <strong>$${cartData.total}</strong>.</p>`
-                    // console.log(htmlContent);
-                    var tempAttachments = [];
-                    for (var i=0; i < imgs.length; i++) {
-                        tempAttachments.push({
-                            filename: imgs[i],
-                            path:  `./public/img/${imgs[i]}`,
-                            cid: `img${i}`
-                        });
-                    }
-                    
-                    var mailOptions = {
-                        from: process.env.NODEMAILER_USER,
-                        to: req.session.user.email,
-                        subject: 'Thanks for your order!',
-                        html: htmlContent,
-                        attachments: tempAttachments
-                    };    
-                    transporter.sendMail(mailOptions, (err, info)=> {
-                        if (err){
-                            console.log(err);
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                        }
-                    })
-                    // empty cart
-                    cart.emptyCart().then((emptycart)=>{
-                        cartData.cart = emptycart;
-                        cartData.total = 0;
-                        res.json({data: cartData});
-                    })
-                })
+            var htmlContent = '';
+            htmlContent += `<h3>Hello, ${req.session.user.fName}. Thank you for shopping at Oneperfectmeal.</h3>`;
+            htmlContent += "Below is your order list.";
+            htmlContent += '<div"><ul>';
+            var imgs = [];
+            for (var i=0; i<cartData.cart.length; i++){
+                imgs.push(cartData.cart[i].image);
+                var itemTotal = cartData.cart[i].price * cartData.cart[i].itemCount;
+                htmlContent += `<li style="list-style: none; text-align: left;"><h4 style="line-height: 1;">${cartData.cart[i].name}</h4><p style="line-height: 1;">price: $${cartData.cart[i].price}</p><p style="line-height: 1;">qty: ${cartData.cart[i].itemCount}</p>`;
+                htmlContent += `<p style="line-height: 1;">total: $${itemTotal} </p>`
+                htmlContent += `<img style="width:100px;" src="cid:img${i}" alt="${cartData.cart[i].name}"></li>`;
+            }
+            htmlContent += '</ul></div><h4>Order summary: </h4>';
+            htmlContent += `<p>Your order total is <strong>$${cartData.total}</strong>.</p>`
+            // console.log(htmlContent);
+            var tempAttachments = [];
+            for (var i=0; i < imgs.length; i++) {
+                tempAttachments.push({
+                    filename: imgs[i],
+                    path:  `./public/img/${imgs[i]}`,
+                    cid: `img${i}`
+                });
+            }
+            
+            var mailOptions = {
+                from: process.env.NODEMAILER_USER,
+                to: req.session.user.email,
+                subject: 'Thanks for your order!',
+                html: htmlContent,
+                attachments: tempAttachments
+            };    
+            transporter.sendMail(mailOptions, (err, info)=> {
+                if (err){
+                    console.log(err);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            })
+            // empty cart
+            cart.emptyCart().then((emptycart)=>{
+                cartData.cart = emptycart;
+                cartData.total = 0;
+                res.json({data: cartData});
             })
         })            
     })

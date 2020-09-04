@@ -1,21 +1,52 @@
 var cart = [];
 
-// adds an item to the cart
-module.exports.addItem = (inItem)=>{
-    console.log("Add to cart " + inItem.mealPNumber);
+// adds item with multiple numbers to the cart
+module.exports.addMtpItems = (inItem, inNoOfItems)=>{
+    console.log("Add items to cart " + inItem.mealPNumber);
+    console.log("noOfItems: " + inNoOfItems);
+    return new Promise((resolve, reject)=>{
+        var exist = false;
+        cart.forEach(x=> {
+            if (x.mealPNumber === inItem.mealPNumber){
+                x.itemCount += inNoOfItems;
+                exist = true;
+            }
+        })
+        if (!exist){
+            inItem.itemCount = inNoOfItems;
+            cart.push(inItem);
+        }
+        // console.log(cart);
+        var count = 0;
+        cart.forEach(x=> {
+            count += x.itemCount;
+        })
+        resolve(count);
+    });
+}
+
+module.exports.increaseItem = (inItem)=>{
+    console.log("increase item " + inItem.mealPNumber);
     return new Promise((resolve,reject)=>{
-        cart.push(inItem);
-        resolve(cart.length);
+        cart.forEach(x=> {
+            if (x.mealPNumber === inItem.mealPNumber){
+                x.itemCount++;
+            }
+        })
+        resolve();
     });
 }
 
 // remove a given item and decrease item qty by 1 from the cart
 module.exports.decreaseItem = (inItem)=>{
+    console.log("decrease item " + inItem.mealPNumber);
     return new Promise((resolve,reject)=>{
-        for(var i = 0; i < cart.length; i++){
-            if(cart[i].mealPNumber == inItem){
-                cart.splice(i, 1);
-                i = cart.length;
+        for (var i = 0; i < cart.length; i++){
+            if (cart[i].mealPNumber === inItem.mealPNumber){
+                cart[i].itemCount--;
+                if (cart[i].itemCount === 0){
+                    this.removeItem(cart[i].mealPNumber);
+                }
             }
         }
         resolve();
@@ -26,35 +57,22 @@ module.exports.decreaseItem = (inItem)=>{
 module.exports.removeItem = (inItem)=>{
     return new Promise((resolve,reject)=>{
         for(var i = 0; i < cart.length; i++){
-            if (cart[i].mealPNumber == inItem){
+            if (cart[i].mealPNumber === parseInt(inItem)){
+                console.log("same item exist!");
                 cart.splice(i, 1);
-                i = i - 1;
+                i = cart.length;
             }
         }
-        console.log(cart.length);
+        // console.log(cart);
         resolve();
     });
 }
 
 
-//returns the cart array with all items (there are duplicates)
+//returns cart array
 module.exports.getCart = ()=>{
     return new Promise((resolve, reject)=>{
         resolve(cart);
-    });
-}
-
-//returns the cart array with unique items (one item is included only once)
-module.exports.getUniqueCart = ()=>{
-    return new Promise((resolve, reject)=>{
-        uniqueCart = [];
-        // only add if array doesn't have the same item (item with the same mealPNumber) 
-        cart.forEach(x=> {
-            if (!uniqueCart.some(item => item.mealPNumber === x.mealPNumber)){
-                uniqueCart.push(x);
-            }
-        })
-        resolve(uniqueCart);
     });
 }
 
@@ -64,33 +82,23 @@ module.exports.checkout = ()=>{
         var price = 0;
         if (cart) {
             cart.forEach(x => {
-                price += x.price;
+                price += x.price * x.itemCount;
             });
         }
         resolve(price.toFixed(2)); // 2 decimal places
     });
 }
 
-//counts every item
-module.exports.everyItemCount = (inCart)=>{
-    return new Promise((resolve, reject)=>{        
+// count every item
+module.exports.countItems = ()=>{
+    return new Promise((resolve, reject)=>{
+        var count = 0;
         if (cart) {
-            var count = 0;
             cart.forEach(x => {
-                x.itemCount = 0;
-            });
-
-            cart.forEach(x => {
-                inCart.forEach(y => {
-                    if (x.mealPNumber === y.mealPNumber){
-                        x.itemCount++;
-                        count++;
-                    }
-                })
+                count += x.itemCount;
             });
         }
-        // console.log("current item count: " + count);
-        resolve();
+        resolve(count); 
     });
 }
 

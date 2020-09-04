@@ -36,7 +36,20 @@
                     if (json.noLoggedin){
                         window.location.href = '/login';
                     } else { //else, add the number of items in cart into span element
-                        $("span.cart-icon").text(`${json.data}`);
+                        if (json.data){
+                            $("span.cart-icon").text(`${json.data}`);
+                        }
+                        else if (json.noOfItems){
+                            $("input.cart-itemQtyNum").val(`${json.noOfItems}`);
+                            // if qty is 1, make minus button to be disabled. otherwise, activate it.
+                            if (json.noOfItems === 1){
+                                $("input.cart-itemQtyMinus").prop('disabled', true);
+                                $("input.cart-itemQtyMinus").addClass('cart-itemQtyMinus-disabled');
+                            } else {
+                                $("input.cart-itemQtyMinus").prop('disabled', false);
+                                $("input.cart-itemQtyMinus").removeClass('cart-itemQtyMinus-disabled');
+                            }
+                        }
                     }
                 }).catch((err)=>{
                     console.log("Error Fetching");
@@ -49,20 +62,39 @@
                 .then(json => {
                     //console.log(json);  
                     $("span.cart-icon").text(`${json.data}`); 
+                    $("input.cart-itemQtyNum").val(`${json.defaultQty}`);
+                    // default value is 1, so make minus button to be disabled
+                    $("input.cart-itemQtyMinus").prop('disabled', true);
+                    $("input.cart-itemQtyMinus").addClass('cart-itemQtyMinus-disabled');
                 }).catch((message)=>{
                     alert(message);
                 });
             }
         }
-        //makes ajax call to add a certain item by meal package number to cart
-        function addToCart(data){
-            console.log("Calling add with: " + data);
-            makeAJAXRequest("POST", "/addToCart", {mealPNumber: data});
+        
+        var noOfItems = 1;
+
+        function increaseQtyDesc(){
+            noOfItems += 1;
+            makeAJAXRequest("POST", "/increaseQtyDesc", {noOfItems: noOfItems});
+        }
+
+        function decreaseQtyDesc(){
+            if (noOfItems !== 1){
+                noOfItems -= 1;
+                makeAJAXRequest("POST", "/decreaseQtyDesc", {noOfItems: noOfItems});
+            }
+        }
+
+        function addMtpItemsToCart(data){
+            console.log("calling add multiple items: " + data);
+            makeAJAXRequest("POST", "/addMtpItemsToCart", {mealPNumber: data, inNoOfItems: noOfItems});
         }
 
         function loadItemCount(){
             makeAJAXRequest("POST", "/loadItemCount");
         }
+
         // when document is ready, call the loadItemCount function to get the number of items in the cart
         $(document).ready(function(){
             loadItemCount();
@@ -88,9 +120,18 @@
                             <p class="mealPDesc-noOfMeals"><span class="mealPDesc-noOfMeals-span">{{data.noOfMeals}} Meals</span></p>
                             <p class="mealPDesc-description">{{data.description}} Meals are included in this package.</p>
 
-                            <button class="btn btn-dark banner-btn addToCart-btn" onclick='addToCart("{{data.mealPNumber}}")'>
+                            <div class="cart-itemQty-box cart-itemQty-box-desc">
+                                <p class="cart-itemQty-p cart-itemQty-p-desc">Quantity :</p>
+                                <input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQtyDesc()'>
+                                <input class="cart-itemQtyNum" type="text" value="" size="2">
+                                <input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQtyDesc()'>
+                            
+                            </div>
+
+                            <button class="btn btn-dark banner-btn addToCart-btn" onclick='addMtpItemsToCart("{{data.mealPNumber}}")'>
                                 ADD TO ORDER
                             </button>
+
                         </div>    
                     </div>
                 </div>

@@ -43,7 +43,11 @@
                             htmlStr += '<p class="cart-name">'+x.name+'</p><p class="cart-available"><i class="fas fa-check"></i> Available</p></div>';
                             htmlStr += '<div class="col-lg-4 col-md-4 col-sm-9 col-5">';
                             htmlStr += '<div class="cart-itemQty-box"><p class="cart-itemQty-p">Quantity</p>'
-                            htmlStr += `<input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQty("${x.mealPNumber}")'>`
+                            if (x.itemCount === 1){
+                                htmlStr += `<input class="cart-itemQtyMinus cart-itemQtyMinus-disabled" type="button" value="-" disabled>`
+                            } else {
+                                htmlStr += `<input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQty("${x.mealPNumber}")'>`
+                            }
                             htmlStr += `<input class="cart-itemQtyNum" type="text" value="${x.itemCount}" size="2">`
                             htmlStr += `<input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQty("${x.mealPNumber}")'>`
                             htmlStr += '</div></div><div class="col-lg-2 col-md-2 col-sm-3 col-12 remove-button-parent">';

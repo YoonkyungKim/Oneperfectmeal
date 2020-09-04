@@ -688,15 +688,28 @@ p {
     text-align: left;
 }
 
+.cart-itemQty-box-desc {
+    margin-bottom: 20px;
+}
+
 .cart-itemQty-p {
     font-weight: 400;
     text-align: left;
+}
+
+.cart-itemQty-p-desc {
+    margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .cart-itemQtyMinus, .cart-itemQtyPlus {
     background-color: #E5226D;
     color: #ffffff;
     border: none;
+}
+
+.cart-itemQtyMinus-disabled {
+    background-color: #f593b8;
 }
 
 .cart-itemQtyMinus {
