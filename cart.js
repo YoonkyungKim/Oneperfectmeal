@@ -102,6 +102,19 @@ module.exports.countItems = ()=>{
     });
 }
 
+// count one item
+module.exports.countItem = (inItem)=>{
+    return new Promise((resolve, reject)=>{
+        var count = 0;
+        cart.forEach(x => {
+            if (x.mealPNumber === inItem.mealPNumber){
+                count = x.itemCount;
+            }
+        })
+        resolve(count); 
+    });
+}
+
 // empty cart
 module.exports.emptyCart = ()=>{
     return new Promise((resolve, reject)=>{

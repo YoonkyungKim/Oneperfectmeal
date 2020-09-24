@@ -702,7 +702,7 @@ p {
     font-size: 14px;
 }
 
-.cart-itemQtyMinus, .cart-itemQtyPlus {
+.cart-itemQtyMinus-css, .cart-itemQtyPlus {
     background-color: #E5226D;
     color: #ffffff;
     border: none;
@@ -722,7 +722,7 @@ p {
     width: 25px;
 }
 
-.cart-itemQtyNum {
+.cart-itemQtyNum-css {
     border: none;
     text-align: center;
 }

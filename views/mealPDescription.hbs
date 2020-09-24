@@ -36,9 +36,13 @@
                     if (json.noLoggedin){
                         window.location.href = '/login';
                     } else { //else, add the number of items in cart into span element
+
+                        // addMtpItemsToCart
                         if (json.data){
                             $("span.cart-icon").text(`${json.data}`);
+                            $("input.cart-itemQtyNum-modal").val(`${json.itemQty}`);
                         }
+                        // increaseQtyDesc, decreaseQtyDesc
                         else if (json.noOfItems){
                             $("input.cart-itemQtyNum").val(`${json.noOfItems}`);
                             // if qty is 1, make minus button to be disabled. otherwise, activate it.
@@ -49,6 +53,22 @@
                                 $("input.cart-itemQtyMinus").prop('disabled', false);
                                 $("input.cart-itemQtyMinus").removeClass('cart-itemQtyMinus-disabled');
                             }
+                        }
+                        // increaseQty, decreaseQty (modal)
+                        else if (json.cartData){
+                            console.log("data mealPNumber: " + data.mealPNumber);
+                            json.cartData.cart.forEach(x => {
+                                if (x.mealPNumber === parseInt(data.mealPNumber)){
+                                    $("input.cart-itemQtyNum-modal").val(`${x.itemCount}`);
+                                    if (x.itemCount === 1){
+                                        $("input.cart-itemQtyMinus-modal").prop('disabled', true);
+                                        $("input.cart-itemQtyMinus-modal").addClass('cart-itemQtyMinus-disabled'); 
+                                    } else {
+                                        $("input.cart-itemQtyMinus-modal").prop('disabled', false);
+                                        $("input.cart-itemQtyMinus-modal").removeClass('cart-itemQtyMinus-disabled'); 
+                                    }
+                                }
+                            })
                         }
                     }
                 }).catch((err)=>{
@@ -91,14 +111,24 @@
             makeAJAXRequest("POST", "/addMtpItemsToCart", {mealPNumber: data, inNoOfItems: noOfItems});
         }
 
-        function loadItemCount(){
-            makeAJAXRequest("POST", "/loadItemCount");
+        function loadItemsCount(){
+            makeAJAXRequest("POST", "/loadItemsCount");
         }
 
         // when document is ready, call the loadItemCount function to get the number of items in the cart
         $(document).ready(function(){
-            loadItemCount();
+            loadItemsCount();
         })
+
+        // for Modal
+        function increaseQty(data){
+            console.log("Calling increase qty " + data);
+            makeAJAXRequest("POST", "/increaseItem", {mealPNumber: data});
+        }
+        function decreaseQty(data){
+            console.log("Calling decrease qty " + data);
+            makeAJAXRequest("POST", "/decreaseItem", {mealPNumber: data});
+        }
 
     </script>    
 
@@ -122,15 +152,50 @@
 
                             <div class="cart-itemQty-box cart-itemQty-box-desc">
                                 <p class="cart-itemQty-p cart-itemQty-p-desc">Quantity :</p>
-                                <input class="cart-itemQtyMinus" type="button" value="-" onclick='decreaseQtyDesc()'>
-                                <input class="cart-itemQtyNum" type="text" value="" size="2">
+                                <input class="cart-itemQtyMinus cart-itemQtyMinus-css" type="button" value="-" onclick='decreaseQtyDesc()'>
+                                <input class="cart-itemQtyNum cart-itemQtyNum-css" type="text" value="" size="2">
                                 <input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQtyDesc()'>
                             
                             </div>
-
-                            <button class="btn btn-dark banner-btn addToCart-btn" onclick='addMtpItemsToCart("{{data.mealPNumber}}")'>
+                            {{!-- button triggers modal --}}
+                            <button class="btn btn-dark banner-btn addToCart-btn" data-toggle="modal" data-target="#exampleModal" onclick='addMtpItemsToCart("{{data.mealPNumber}}")'>
                                 ADD TO ORDER
                             </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">You have successfully updated your cart.</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mealPDesc-right-innerBox">
+                                        <p class="mealPDesc-name">{{data.name}} Package</p>
+                                        <p class="mealPDesc-price">${{data.price}}</p>
+                                        <p class="mealPDesc-noOfMeals"><span class="mealPDesc-noOfMeals-span">{{data.noOfMeals}} Meals</span></p>
+                                        <p class="mealPDesc-description">{{data.description}} Meals are included in this package.</p>
+
+                                        <div class="cart-itemQty-box cart-itemQty-box-desc">
+                                            <p class="cart-itemQty-p cart-itemQty-p-desc">Quantity :</p>
+                                            <input class="cart-itemQtyMinus-css cart-itemQtyMinus-modal" type="button" value="-" onclick='decreaseQty("{{data.mealPNumber}}")'>
+                                            <input class="cart-itemQtyNum-css cart-itemQtyNum-modal" type="text" value="" size="2">
+                                            <input class="cart-itemQtyPlus" type="button" value="+" onclick='increaseQty("{{data.mealPNumber}}")'>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" onclick="location.href='/cart'">checkout</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">continue shopping</button>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+
 
                         </div>    
                     </div>

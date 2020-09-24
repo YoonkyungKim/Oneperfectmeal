@@ -1,6 +1,4 @@
-// Yoonkyung Kim (121389191)
-// ykim268@myseneca.ca
-// Heroku link: https://sheltered-beyond-52937.herokuapp.com/
+// Heroku link: https://oneperfectmeal.herokuapp.com/
 // Github link: https://github.com/YoonkyungKim/WEB322-Oneperfectmeal
 
 // data clerk account:
@@ -504,6 +502,7 @@ app.get("/mealPDesc", (req, res) => {
     if (req.query.mealPNumber){ 
         console.log("number exists in query");
         db.getMealByNumber(req.query.mealPNumber).then((mealP)=>{
+            console.log(mealP);
             res.render("mealPDescription", {
                 data: mealP,
                 page: "mealPDesc",
@@ -537,8 +536,10 @@ app.post("/addMtpItemsToCart", (req, res) => {
         db.getMealByNumber(req.body.mealPNumber)
         .then((item)=>{
             cart.addMtpItems(item, req.body.inNoOfItems)
-            .then((noOfItems)=>{
-                res.json({data: noOfItems});
+            .then((noOfAllItems)=>{
+                cart.countItem(item).then((noOfOneItem)=>{
+                    res.json({data: noOfAllItems, itemQty: noOfOneItem});
+                })
             })
         }).catch(()=>{
             res.json({message: "No Items found"});
@@ -558,8 +559,8 @@ app.post("/decreaseQtyDesc", (req, res) => {
     res.json({noOfItems: noOfItems});
 });
 
-// AJAX route to load the item count value when the page is loaded (to apply cart data change)
-app.post("/loadItemCount", (req, res) => {
+// AJAX route to load items count value when the page is loaded (to apply cart data change)
+app.post("/loadItemsCount", (req, res) => {
     cart.countItems()
     .then((count)=>{
         res.json({data: count, defaultQty: 1});
@@ -578,7 +579,7 @@ app.post("/loadCart", (req, res) => {
         cartData.cart = items;
         cart.checkout().then((total)=>{
             cartData.total = total;
-            res.json({data: cartData});
+            res.json({cartData: cartData});
         })            
     })
 });
@@ -599,7 +600,7 @@ app.get("/cart",(req,res)=>{
                 cartData.total = total;
                 cartData.cart = items; 
                 res.render("cart", {
-                    data:cartData, 
+                    cartData:cartData, 
                     layout:false, 
                     loggedIn: true});
             })            
@@ -640,7 +641,7 @@ app.post("/decreaseItem", (req, res) => {
             cart.getCart().then((items)=>{
                 cartData.cart = items; 
                 console.log(cartData.cart);
-                res.json({data: cartData});
+                res.json({cartData: cartData});
             })
         }) 
     }).catch(()=>{
@@ -661,8 +662,8 @@ app.post("/increaseItem", (req, res) => {
             cartData.total = inTotal;
             cart.getCart().then((items)=>{
                 cartData.cart = items; 
-                console.log(cartData.cart);
-                res.json({data: cartData});
+                console.log(cartData.total);
+                res.json({cartData: cartData});
             })
         })
     }).catch(()=>{
