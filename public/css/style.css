@@ -1152,6 +1152,11 @@ p {
         margin: 5% 0 0 35%;
     }
 
+    .cart-itemQty-box-desc {
+        margin-left: 0;
+        margin-bottom: 20px;
+    }
+
     .cart-itemQty-p {
         margin-bottom: 3%;
     }
@@ -1347,9 +1352,17 @@ p {
         text-align: right;
     }
 
+    .cart-itemQty-box-desc {
+        text-align: left;
+    }
+
     .cart-itemQty-p {
         text-align: right;
         font-size: 0.9rem;
+    }
+
+    .cart-itemQty-p-desc {
+        text-align: left;
     }
 
     /* price box */
